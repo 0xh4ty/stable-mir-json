@@ -162,7 +162,8 @@ fn generate_html(smir: &SmirJson) -> String {
             background: var(--bg-block);
             border-radius: 6px;
             margin-bottom: 1rem;
-            overflow: hidden;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }}
         .block-header {{
             background: var(--border);
@@ -173,6 +174,7 @@ fn generate_html(smir: &SmirJson) -> String {
         }}
         .annotated-table {{
             width: 100%;
+            min-width: 700px;
             border-collapse: collapse;
             font-size: 0.85rem;
             font-family: 'SF Mono', 'Fira Code', monospace;
