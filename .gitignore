@@ -1,3 +1,7 @@
 target/
 tests/ui/failing/*
 tests/ui/passing/*
+# Generated output directories
+output-html/
+output-dot/
+output-d2/
