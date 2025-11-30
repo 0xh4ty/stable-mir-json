@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>recursion_simple - MIR Walkthrough</title>
+    <style>
+        :root {
+            --bg: #1a1a2e;
+            --bg-section: #16213e;
+            --bg-block: #0f0f1a;
+            --bg-terminator: #1a1a3e;
+            --text: #eee;
+            --text-dim: #888;
+            --accent: #8be9fd;
+            --green: #50fa7b;
+            --purple: #bd93f9;
+            --pink: #ff79c6;
+            --border: #333;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 2rem;
+        }
+        h1 {
+            color: var(--accent);
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+        .function {
+            background: var(--bg-section);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .function h2 {
+            color: var(--accent);
+            margin: 0 0 0.5rem 0;
+        }
+        .fn-meta {
+            color: var(--text-dim);
+            margin: 0 0 1.5rem 0;
+            font-size: 0.9rem;
+        }
+        .fn-meta code {
+            background: var(--bg-block);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-size: 0.85rem;
+        }
+        .block {
+            background: var(--bg-block);
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        .block-header {
+            background: var(--border);
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            color: var(--pink);
+            font-family: monospace;
+        }
+        .annotated-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+        }
+        .annotated-table th {
+            text-align: left;
+            padding: 0.6rem 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-dim);
+            font-weight: normal;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .annotated-table td {
+            padding: 0.5rem 1rem;
+            vertical-align: top;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .annotated-table tr:last-child td {
+            border-bottom: none;
+        }
+        .col-source { width: 30%; color: var(--text); }
+        .col-mir { width: 35%; color: var(--green); }
+        .col-annot { width: 35%; color: var(--purple); }
+        .terminator {
+            background: var(--bg-terminator);
+        }
+        .terminator .col-mir {
+            color: var(--pink);
+        }
+        .recursive {
+            background: rgba(255, 121, 198, 0.15);
+        }
+        .recursive .col-annot {
+            color: var(--pink);
+            font-weight: 600;
+        }
+        .empty { color: var(--text-dim); font-style: italic; }
+    </style>
+</head>
+<body>
+    <h1>recursion_simple</h1>
+    <section class="function">
+    <h2>sum_to_n_rec</h2>
+    <p class="fn-meta">7 basic blocks — <code>sum_to_n_rec</code></p>
+    <div class="block">
+        <div class="block-header">bb0</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">if n == 0 {</td>
+                    <td class="col-mir">→ switch(_1) [0→bb1; else→bb2]</td>
+                    <td class="col-annot">Branch on _1</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb1</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">0</td>
+                    <td class="col-mir">_0 = 0</td>
+                    <td class="col-annot">Load constant</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">if n == 0 {</td>
+                    <td class="col-mir">→ goto bb6</td>
+                    <td class="col-annot">Jump to bb6</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb2</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">n + sum_to_n_rec(n - 1)</td>
+                    <td class="col-mir">_4 = checked(_1 - 1)</td>
+                    <td class="col-annot">Checked Subtract (may panic)</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">n + sum_to_n_rec(n - 1)</td>
+                    <td class="col-mir">→ assert(move _4.1 == false) → bb3</td>
+                    <td class="col-annot">Panic if move _4.1 is true</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb3</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">n + sum_to_n_rec(n - 1)</td>
+                    <td class="col-mir">_3 = move _4.0</td>
+                    <td class="col-annot">Move value</td>
+                </tr>
+                <tr class="terminator recursive">
+                    <td class="col-source">n + sum_to_n_rec(n - 1)</td>
+                    <td class="col-mir">→ _2 = sum_to_n_rec(move _3) → bb4</td>
+                    <td class="col-annot">⟳ RECURSIVE call to sum_to_n_rec</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb4</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">n + sum_to_n_rec(n - 1)</td>
+                    <td class="col-mir">_5 = checked(_1 + _2)</td>
+                    <td class="col-annot">Checked Add (may panic)</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">n + sum_to_n_rec(n - 1)</td>
+                    <td class="col-mir">→ assert(move _5.1 == false) → bb5</td>
+                    <td class="col-annot">Panic if move _5.1 is true</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb5</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">n + sum_to_n_rec(n - 1)</td>
+                    <td class="col-mir">_0 = move _5.0</td>
+                    <td class="col-annot">Move value</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">if n == 0 {</td>
+                    <td class="col-mir">→ goto bb6</td>
+                    <td class="col-annot">Jump to bb6</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb6</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">}</td>
+                    <td class="col-mir">→ return</td>
+                    <td class="col-annot">Return from function</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+<section class="function">
+    <h2>main</h2>
+    <p class="fn-meta">4 basic blocks — <code>main</code></p>
+    <div class="block">
+        <div class="block-header">bb0</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">let ans = sum_to_n_rec(10);</td>
+                    <td class="col-mir">→ _1 = sum_to_n_rec(10) → bb1</td>
+                    <td class="col-annot">Call sum_to_n_rec</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb1</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">assert!(ans == 55);</td>
+                    <td class="col-mir">→ switch(_1) [55→bb2; else→bb3]</td>
+                    <td class="col-annot">Branch on _1</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb2</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">}</td>
+                    <td class="col-mir">→ return</td>
+                    <td class="col-annot">Return from function</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb3</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">assert!(ans == 55);</td>
+                    <td class="col-mir">→ _2 = panic([16 bytes])</td>
+                    <td class="col-annot">Call panic</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+</body>
+</html>

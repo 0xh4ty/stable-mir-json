@@ -1,0 +1,1749 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>binop - MIR Walkthrough</title>
+    <style>
+        :root {
+            --bg: #1a1a2e;
+            --bg-section: #16213e;
+            --bg-block: #0f0f1a;
+            --bg-terminator: #1a1a3e;
+            --text: #eee;
+            --text-dim: #888;
+            --accent: #8be9fd;
+            --green: #50fa7b;
+            --purple: #bd93f9;
+            --pink: #ff79c6;
+            --border: #333;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 2rem;
+        }
+        h1 {
+            color: var(--accent);
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+        .function {
+            background: var(--bg-section);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .function h2 {
+            color: var(--accent);
+            margin: 0 0 0.5rem 0;
+        }
+        .fn-meta {
+            color: var(--text-dim);
+            margin: 0 0 1.5rem 0;
+            font-size: 0.9rem;
+        }
+        .fn-meta code {
+            background: var(--bg-block);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-size: 0.85rem;
+        }
+        .block {
+            background: var(--bg-block);
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        .block-header {
+            background: var(--border);
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            color: var(--pink);
+            font-family: monospace;
+        }
+        .annotated-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+        }
+        .annotated-table th {
+            text-align: left;
+            padding: 0.6rem 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-dim);
+            font-weight: normal;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .annotated-table td {
+            padding: 0.5rem 1rem;
+            vertical-align: top;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .annotated-table tr:last-child td {
+            border-bottom: none;
+        }
+        .col-source { width: 30%; color: var(--text); }
+        .col-mir { width: 35%; color: var(--green); }
+        .col-annot { width: 35%; color: var(--purple); }
+        .terminator {
+            background: var(--bg-terminator);
+        }
+        .terminator .col-mir {
+            color: var(--pink);
+        }
+        .recursive {
+            background: rgba(255, 121, 198, 0.15);
+        }
+        .recursive .col-annot {
+            color: var(--pink);
+            font-weight: 600;
+        }
+        .empty { color: var(--text-dim); font-style: italic; }
+    </style>
+</head>
+<body>
+    <h1>binop</h1>
+    <section class="function">
+    <h2>test_binop</h2>
+    <p class="fn-meta">81 basic blocks — <code>test_binop</code></p>
+    <div class="block">
+        <div class="block-header">bb0</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(x + y == 52);</td>
+                    <td class="col-mir">_4 = checked(_1 + _2)</td>
+                    <td class="col-annot">Checked Add (may panic)</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x + y == 52);</td>
+                    <td class="col-mir">→ assert(move _4.1 == false) → bb1</td>
+                    <td class="col-annot">Panic if move _4.1 is true</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb1</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(x + y == 52);</td>
+                    <td class="col-mir">_3 = move _4.0</td>
+                    <td class="col-annot">Move value</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x + y == 52);</td>
+                    <td class="col-mir">→ switch(move _3) [52→bb2; else→bb3]</td>
+                    <td class="col-annot">Branch on move _3</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb2</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(52 == x + y);</td>
+                    <td class="col-mir">_7 = checked(_1 + _2)</td>
+                    <td class="col-annot">Checked Add (may panic)</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(52 == x + y);</td>
+                    <td class="col-mir">→ assert(move _7.1 == false) → bb4</td>
+                    <td class="col-annot">Panic if move _7.1 is true</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb3</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x + y == 52);</td>
+                    <td class="col-mir">→ _5 = panic([16 bytes])</td>
+                    <td class="col-annot">Call panic</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb4</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(52 == x + y);</td>
+                    <td class="col-mir">_6 = move _7.0</td>
+                    <td class="col-annot">Move value</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(52 == x + y);</td>
+                    <td class="col-mir">→ switch(move _6) [52→bb5; else→bb6]</td>
+                    <td class="col-annot">Branch on move _6</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb5</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(x + y == y + x);</td>
+                    <td class="col-mir">_11 = checked(_1 + _2)</td>
+                    <td class="col-annot">Checked Add (may panic)</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x + y == y + x);</td>
+                    <td class="col-mir">→ assert(move _11.1 == false) → bb7</td>
+                    <td class="col-annot">Panic if move _11.1 is true</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb6</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">assert!(52 == x + y);</td>
+                    <td class="col-mir">→ _8 = panic([16 bytes])</td>
+                    <td class="col-annot">Call panic</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb7</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(x + y == y + x);</td>
+                    <td class="col-mir">_10 = move _11.0</td>
+                    <td class="col-annot">Move value</td>
+                </tr>
+                <tr>
+                    <td class="col-source">assert!(x + y == y + x);</td>
+                    <td class="col-mir">_13 = checked(_2 + _1)</td>
+                    <td class="col-annot">Checked Add (may panic)</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x + y == y + x);</td>
+                    <td class="col-mir">→ assert(move _13.1 == false) → bb8</td>
+                    <td class="col-annot">Panic if move _13.1 is true</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb8</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(x + y == y + x);</td>
+                    <td class="col-mir">_12 = move _13.0</td>
+                    <td class="col-annot">Move value</td>
+                </tr>
+                <tr>
+                    <td class="col-source">assert!(x + y == y + x);</td>
+                    <td class="col-mir">_9 = move _10 == move _12</td>
+                    <td class="col-annot">Equal operation</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x + y == y + x);</td>
+                    <td class="col-mir">→ switch(move _9) [0→bb10; else→bb9]</td>
+                    <td class="col-annot">Branch on move _9</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb9</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(x - y == 32);</td>
+                    <td class="col-mir">_16 = checked(_1 - _2)</td>
+                    <td class="col-annot">Checked Subtract (may panic)</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x - y == 32);</td>
+                    <td class="col-mir">→ assert(move _16.1 == false) → bb11</td>
+                    <td class="col-annot">Panic if move _16.1 is true</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb10</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x + y == y + x);</td>
+                    <td class="col-mir">→ _14 = panic([16 bytes])</td>
+                    <td class="col-annot">Call panic</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb11</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(x - y == 32);</td>
+                    <td class="col-mir">_15 = move _16.0</td>
+                    <td class="col-annot">Move value</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x - y == 32);</td>
+                    <td class="col-mir">→ switch(move _15) [32→bb12; else→bb13]</td>
+                    <td class="col-annot">Branch on move _15</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb12</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(y - x == -32);</td>
+                    <td class="col-mir">_19 = checked(_2 - _1)</td>
+                    <td class="col-annot">Checked Subtract (may panic)</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(y - x == -32);</td>
+                    <td class="col-mir">→ assert(move _19.1 == false) → bb14</td>
+                    <td class="col-annot">Panic if move _19.1 is true</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb13</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x - y == 32);</td>
+                    <td class="col-mir">→ _17 = panic([16 bytes])</td>
+                    <td class="col-annot">Call panic</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb14</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(y - x == -32);</td>
+                    <td class="col-mir">_18 = move _19.0</td>
+                    <td class="col-annot">Move value</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(y - x == -32);</td>
+                    <td class="col-mir">→ switch(move _18) [4294967264→bb15; else→bb16]</td>
+                    <td class="col-annot">Branch on move _18</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb15</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(y - x != x - y);</td>
+                    <td class="col-mir">_23 = checked(_2 - _1)</td>
+                    <td class="col-annot">Checked Subtract (may panic)</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(y - x != x - y);</td>
+                    <td class="col-mir">→ assert(move _23.1 == false) → bb17</td>
+                    <td class="col-annot">Panic if move _23.1 is true</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb16</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">assert!(y - x == -32);</td>
+                    <td class="col-mir">→ _20 = panic([16 bytes])</td>
+                    <td class="col-annot">Call panic</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb17</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(y - x != x - y);</td>
+                    <td class="col-mir">_22 = move _23.0</td>
+                    <td class="col-annot">Move value</td>
+                </tr>
+                <tr>
+                    <td class="col-source">assert!(y - x != x - y);</td>
+                    <td class="col-mir">_25 = checked(_1 - _2)</td>
+                    <td class="col-annot">Checked Subtract (may panic)</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(y - x != x - y);</td>
+                    <td class="col-mir">→ assert(move _25.1 == false) → bb18</td>
+                    <td class="col-annot">Panic if move _25.1 is true</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb18</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(y - x != x - y);</td>
+                    <td class="col-mir">_24 = move _25.0</td>
+                    <td class="col-annot">Move value</td>
+                </tr>
+                <tr>
+                    <td class="col-source">assert!(y - x != x - y);</td>
+                    <td class="col-mir">_21 = move _22 != move _24</td>
+                    <td class="col-annot">Not equal operation</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(y - x != x - y);</td>
+                    <td class="col-mir">→ switch(move _21) [0→bb20; else→bb19]</td>
+                    <td class="col-annot">Branch on move _21</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb19</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(x * y == 420);</td>
+                    <td class="col-mir">_28 = checked(_1 * _2)</td>
+                    <td class="col-annot">Checked Multiply (may panic)</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x * y == 420);</td>
+                    <td class="col-mir">→ assert(move _28.1 == false) → bb21</td>
+                    <td class="col-annot">Panic if move _28.1 is true</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb20</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">assert!(y - x != x - y);</td>
+                    <td class="col-mir">→ _26 = panic([16 bytes])</td>
+                    <td class="col-annot">Call panic</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb21</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(x * y == 420);</td>
+                    <td class="col-mir">_27 = move _28.0</td>
+                    <td class="col-annot">Move value</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x * y == 420);</td>
+                    <td class="col-mir">→ switch(move _27) [420→bb22; else→bb23]</td>
+                    <td class="col-annot">Branch on move _27</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb22</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(x * -y == -420);</td>
+                    <td class="col-mir">_32 = _2 == -2147483648</td>
+                    <td class="col-annot">Equal operation</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x * -y == -420);</td>
+                    <td class="col-mir">→ assert(move _32 == false) → bb24</td>
+                    <td class="col-annot">Panic if move _32 is true</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb23</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x * y == 420);</td>
+                    <td class="col-mir">→ _29 = panic([16 bytes])</td>
+                    <td class="col-annot">Call panic</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb24</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(x * -y == -420);</td>
+                    <td class="col-mir">_31 = -_2</td>
+                    <td class="col-annot">Negation</td>
+                </tr>
+                <tr>
+                    <td class="col-source">assert!(x * -y == -420);</td>
+                    <td class="col-mir">_33 = checked(_1 * _31)</td>
+                    <td class="col-annot">Checked Multiply (may panic)</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x * -y == -420);</td>
+                    <td class="col-mir">→ assert(move _33.1 == false) → bb25</td>
+                    <td class="col-annot">Panic if move _33.1 is true</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb25</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(x * -y == -420);</td>
+                    <td class="col-mir">_30 = move _33.0</td>
+                    <td class="col-annot">Move value</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x * -y == -420);</td>
+                    <td class="col-mir">→ switch(move _30) [4294966876→bb26; else→bb27]</td>
+                    <td class="col-annot">Branch on move _30</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb26</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(-x * y == -420);</td>
+                    <td class="col-mir">_37 = _1 == -2147483648</td>
+                    <td class="col-annot">Equal operation</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(-x * y == -420);</td>
+                    <td class="col-mir">→ assert(move _37 == false) → bb28</td>
+                    <td class="col-annot">Panic if move _37 is true</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb27</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x * -y == -420);</td>
+                    <td class="col-mir">→ _34 = panic([16 bytes])</td>
+                    <td class="col-annot">Call panic</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb28</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(-x * y == -420);</td>
+                    <td class="col-mir">_36 = -_1</td>
+                    <td class="col-annot">Negation</td>
+                </tr>
+                <tr>
+                    <td class="col-source">assert!(-x * y == -420);</td>
+                    <td class="col-mir">_38 = checked(_36 * _2)</td>
+                    <td class="col-annot">Checked Multiply (may panic)</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(-x * y == -420);</td>
+                    <td class="col-mir">→ assert(move _38.1 == false) → bb29</td>
+                    <td class="col-annot">Panic if move _38.1 is true</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb29</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(-x * y == -420);</td>
+                    <td class="col-mir">_35 = move _38.0</td>
+                    <td class="col-annot">Move value</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(-x * y == -420);</td>
+                    <td class="col-mir">→ switch(move _35) [4294966876→bb30; else→bb31]</td>
+                    <td class="col-annot">Branch on move _35</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb30</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(-x * -y == 420);</td>
+                    <td class="col-mir">_42 = _1 == -2147483648</td>
+                    <td class="col-annot">Equal operation</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(-x * -y == 420);</td>
+                    <td class="col-mir">→ assert(move _42 == false) → bb32</td>
+                    <td class="col-annot">Panic if move _42 is true</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb31</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">assert!(-x * y == -420);</td>
+                    <td class="col-mir">→ _39 = panic([16 bytes])</td>
+                    <td class="col-annot">Call panic</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb32</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(-x * -y == 420);</td>
+                    <td class="col-mir">_41 = -_1</td>
+                    <td class="col-annot">Negation</td>
+                </tr>
+                <tr>
+                    <td class="col-source">assert!(-x * -y == 420);</td>
+                    <td class="col-mir">_44 = _2 == -2147483648</td>
+                    <td class="col-annot">Equal operation</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(-x * -y == 420);</td>
+                    <td class="col-mir">→ assert(move _44 == false) → bb33</td>
+                    <td class="col-annot">Panic if move _44 is true</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb33</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(-x * -y == 420);</td>
+                    <td class="col-mir">_43 = -_2</td>
+                    <td class="col-annot">Negation</td>
+                </tr>
+                <tr>
+                    <td class="col-source">assert!(-x * -y == 420);</td>
+                    <td class="col-mir">_45 = checked(_41 * _43)</td>
+                    <td class="col-annot">Checked Multiply (may panic)</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(-x * -y == 420);</td>
+                    <td class="col-mir">→ assert(move _45.1 == false) → bb34</td>
+                    <td class="col-annot">Panic if move _45.1 is true</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb34</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(-x * -y == 420);</td>
+                    <td class="col-mir">_40 = move _45.0</td>
+                    <td class="col-annot">Move value</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(-x * -y == 420);</td>
+                    <td class="col-mir">→ switch(move _40) [420→bb35; else→bb36]</td>
+                    <td class="col-annot">Branch on move _40</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb35</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(1 ^ 2 == 3);</td>
+                    <td class="col-mir">_47 = 1 ^ 2</td>
+                    <td class="col-annot">XOR operation</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(1 ^ 2 == 3);</td>
+                    <td class="col-mir">→ switch(move _47) [3→bb37; else→bb38]</td>
+                    <td class="col-annot">Branch on move _47</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb36</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">assert!(-x * -y == 420);</td>
+                    <td class="col-mir">→ _46 = panic([16 bytes])</td>
+                    <td class="col-annot">Call panic</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb37</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(1 ^ 3 == 2);</td>
+                    <td class="col-mir">_49 = 1 ^ 3</td>
+                    <td class="col-annot">XOR operation</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(1 ^ 3 == 2);</td>
+                    <td class="col-mir">→ switch(move _49) [2→bb39; else→bb40]</td>
+                    <td class="col-annot">Branch on move _49</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb38</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">assert!(1 ^ 2 == 3);</td>
+                    <td class="col-mir">→ _48 = panic([16 bytes])</td>
+                    <td class="col-annot">Call panic</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb39</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(1 | 2 == 3);</td>
+                    <td class="col-mir">_51 = 1 | 2</td>
+                    <td class="col-annot">OR operation</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(1 | 2 == 3);</td>
+                    <td class="col-mir">→ switch(move _51) [3→bb41; else→bb42]</td>
+                    <td class="col-annot">Branch on move _51</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb40</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">assert!(1 ^ 3 == 2);</td>
+                    <td class="col-mir">→ _50 = panic([16 bytes])</td>
+                    <td class="col-annot">Call panic</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb41</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(1 | 3 == 3);</td>
+                    <td class="col-mir">_53 = 1 | 3</td>
+                    <td class="col-annot">OR operation</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(1 | 3 == 3);</td>
+                    <td class="col-mir">→ switch(move _53) [3→bb43; else→bb44]</td>
+                    <td class="col-annot">Branch on move _53</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb42</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">assert!(1 | 2 == 3);</td>
+                    <td class="col-mir">→ _52 = panic([16 bytes])</td>
+                    <td class="col-annot">Call panic</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb43</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(1 &amp; 2 == 0);</td>
+                    <td class="col-mir">_55 = 1 &amp; 2</td>
+                    <td class="col-annot">AND operation</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(1 &amp; 2 == 0);</td>
+                    <td class="col-mir">→ switch(move _55) [0→bb45; else→bb46]</td>
+                    <td class="col-annot">Branch on move _55</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb44</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">assert!(1 | 3 == 3);</td>
+                    <td class="col-mir">→ _54 = panic([16 bytes])</td>
+                    <td class="col-annot">Call panic</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb45</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(1 &amp; 3 == 1);</td>
+                    <td class="col-mir">_57 = 1 &amp; 3</td>
+                    <td class="col-annot">AND operation</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(1 &amp; 3 == 1);</td>
+                    <td class="col-mir">→ switch(move _57) [1→bb47; else→bb48]</td>
+                    <td class="col-annot">Branch on move _57</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb46</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">assert!(1 &amp; 2 == 0);</td>
+                    <td class="col-mir">→ _56 = panic([16 bytes])</td>
+                    <td class="col-annot">Call panic</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb47</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(2 &lt;&lt; 1 == 4);</td>
+                    <td class="col-mir">_60 = 1 as RigidTy(Uint(U32))</td>
+                    <td class="col-annot">Integer conversion</td>
+                </tr>
+                <tr>
+                    <td class="col-source">assert!(2 &lt;&lt; 1 == 4);</td>
+                    <td class="col-mir">_61 = move _60 &lt; 32</td>
+                    <td class="col-annot">Less than operation</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(2 &lt;&lt; 1 == 4);</td>
+                    <td class="col-mir">→ assert(move _61 == true) → bb49</td>
+                    <td class="col-annot">Panic if move _61 is false</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb48</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">assert!(1 &amp; 3 == 1);</td>
+                    <td class="col-mir">→ _58 = panic([16 bytes])</td>
+                    <td class="col-annot">Call panic</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb49</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(2 &lt;&lt; 1 == 4);</td>
+                    <td class="col-mir">_59 = 2 &lt;&lt; 1</td>
+                    <td class="col-annot">Shift left operation</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(2 &lt;&lt; 1 == 4);</td>
+                    <td class="col-mir">→ switch(move _59) [4→bb50; else→bb51]</td>
+                    <td class="col-annot">Branch on move _59</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb50</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(2 &gt;&gt; 1 == 1);</td>
+                    <td class="col-mir">_64 = 1 as RigidTy(Uint(U32))</td>
+                    <td class="col-annot">Integer conversion</td>
+                </tr>
+                <tr>
+                    <td class="col-source">assert!(2 &gt;&gt; 1 == 1);</td>
+                    <td class="col-mir">_65 = move _64 &lt; 32</td>
+                    <td class="col-annot">Less than operation</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(2 &gt;&gt; 1 == 1);</td>
+                    <td class="col-mir">→ assert(move _65 == true) → bb52</td>
+                    <td class="col-annot">Panic if move _65 is false</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb51</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">assert!(2 &lt;&lt; 1 == 4);</td>
+                    <td class="col-mir">→ _62 = panic([16 bytes])</td>
+                    <td class="col-annot">Call panic</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb52</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(2 &gt;&gt; 1 == 1);</td>
+                    <td class="col-mir">_63 = 2 &gt;&gt; 1</td>
+                    <td class="col-annot">Shift right operation</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(2 &gt;&gt; 1 == 1);</td>
+                    <td class="col-mir">→ switch(move _63) [1→bb53; else→bb54]</td>
+                    <td class="col-annot">Branch on move _63</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb53</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(3 &gt;&gt; 1 == 1);</td>
+                    <td class="col-mir">_68 = 1 as RigidTy(Uint(U32))</td>
+                    <td class="col-annot">Integer conversion</td>
+                </tr>
+                <tr>
+                    <td class="col-source">assert!(3 &gt;&gt; 1 == 1);</td>
+                    <td class="col-mir">_69 = move _68 &lt; 32</td>
+                    <td class="col-annot">Less than operation</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(3 &gt;&gt; 1 == 1);</td>
+                    <td class="col-mir">→ assert(move _69 == true) → bb55</td>
+                    <td class="col-annot">Panic if move _69 is false</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb54</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">assert!(2 &gt;&gt; 1 == 1);</td>
+                    <td class="col-mir">→ _66 = panic([16 bytes])</td>
+                    <td class="col-annot">Call panic</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb55</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(3 &gt;&gt; 1 == 1);</td>
+                    <td class="col-mir">_67 = 3 &gt;&gt; 1</td>
+                    <td class="col-annot">Shift right operation</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(3 &gt;&gt; 1 == 1);</td>
+                    <td class="col-mir">→ switch(move _67) [1→bb56; else→bb57]</td>
+                    <td class="col-annot">Branch on move _67</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb56</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(1 &gt;&gt; 1 == 0);</td>
+                    <td class="col-mir">_72 = 1 as RigidTy(Uint(U32))</td>
+                    <td class="col-annot">Integer conversion</td>
+                </tr>
+                <tr>
+                    <td class="col-source">assert!(1 &gt;&gt; 1 == 0);</td>
+                    <td class="col-mir">_73 = move _72 &lt; 32</td>
+                    <td class="col-annot">Less than operation</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(1 &gt;&gt; 1 == 0);</td>
+                    <td class="col-mir">→ assert(move _73 == true) → bb58</td>
+                    <td class="col-annot">Panic if move _73 is false</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb57</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">assert!(3 &gt;&gt; 1 == 1);</td>
+                    <td class="col-mir">→ _70 = panic([16 bytes])</td>
+                    <td class="col-annot">Call panic</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb58</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(1 &gt;&gt; 1 == 0);</td>
+                    <td class="col-mir">_71 = 1 &gt;&gt; 1</td>
+                    <td class="col-annot">Shift right operation</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(1 &gt;&gt; 1 == 0);</td>
+                    <td class="col-mir">→ switch(move _71) [0→bb59; else→bb60]</td>
+                    <td class="col-annot">Branch on move _71</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb59</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(x &lt; x + y);</td>
+                    <td class="col-mir">_77 = checked(_1 + _2)</td>
+                    <td class="col-annot">Checked Add (may panic)</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x &lt; x + y);</td>
+                    <td class="col-mir">→ assert(move _77.1 == false) → bb61</td>
+                    <td class="col-annot">Panic if move _77.1 is true</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb60</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">assert!(1 &gt;&gt; 1 == 0);</td>
+                    <td class="col-mir">→ _74 = panic([16 bytes])</td>
+                    <td class="col-annot">Call panic</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb61</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(x &lt; x + y);</td>
+                    <td class="col-mir">_76 = move _77.0</td>
+                    <td class="col-annot">Move value</td>
+                </tr>
+                <tr>
+                    <td class="col-source">assert!(x &lt; x + y);</td>
+                    <td class="col-mir">_75 = _1 &lt; move _76</td>
+                    <td class="col-annot">Less than operation</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x &lt; x + y);</td>
+                    <td class="col-mir">→ switch(move _75) [0→bb63; else→bb62]</td>
+                    <td class="col-annot">Branch on move _75</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb62</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(x &lt;= x + y);</td>
+                    <td class="col-mir">_81 = checked(_1 + _2)</td>
+                    <td class="col-annot">Checked Add (may panic)</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x &lt;= x + y);</td>
+                    <td class="col-mir">→ assert(move _81.1 == false) → bb64</td>
+                    <td class="col-annot">Panic if move _81.1 is true</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb63</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x &lt; x + y);</td>
+                    <td class="col-mir">→ _78 = panic([16 bytes])</td>
+                    <td class="col-annot">Call panic</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb64</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(x &lt;= x + y);</td>
+                    <td class="col-mir">_80 = move _81.0</td>
+                    <td class="col-annot">Move value</td>
+                </tr>
+                <tr>
+                    <td class="col-source">assert!(x &lt;= x + y);</td>
+                    <td class="col-mir">_79 = _1 &lt;= move _80</td>
+                    <td class="col-annot">Less or equal operation</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x &lt;= x + y);</td>
+                    <td class="col-mir">→ switch(move _79) [0→bb66; else→bb65]</td>
+                    <td class="col-annot">Branch on move _79</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb65</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(x &lt;= x + y - y);</td>
+                    <td class="col-mir">_86 = checked(_1 + _2)</td>
+                    <td class="col-annot">Checked Add (may panic)</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x &lt;= x + y - y);</td>
+                    <td class="col-mir">→ assert(move _86.1 == false) → bb67</td>
+                    <td class="col-annot">Panic if move _86.1 is true</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb66</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x &lt;= x + y);</td>
+                    <td class="col-mir">→ _82 = panic([16 bytes])</td>
+                    <td class="col-annot">Call panic</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb67</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(x &lt;= x + y - y);</td>
+                    <td class="col-mir">_85 = move _86.0</td>
+                    <td class="col-annot">Move value</td>
+                </tr>
+                <tr>
+                    <td class="col-source">assert!(x &lt;= x + y - y);</td>
+                    <td class="col-mir">_87 = checked(_85 - _2)</td>
+                    <td class="col-annot">Checked Subtract (may panic)</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x &lt;= x + y - y);</td>
+                    <td class="col-mir">→ assert(move _87.1 == false) → bb68</td>
+                    <td class="col-annot">Panic if move _87.1 is true</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb68</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(x &lt;= x + y - y);</td>
+                    <td class="col-mir">_84 = move _87.0</td>
+                    <td class="col-annot">Move value</td>
+                </tr>
+                <tr>
+                    <td class="col-source">assert!(x &lt;= x + y - y);</td>
+                    <td class="col-mir">_83 = _1 &lt;= move _84</td>
+                    <td class="col-annot">Less or equal operation</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x &lt;= x + y - y);</td>
+                    <td class="col-mir">→ switch(move _83) [0→bb70; else→bb69]</td>
+                    <td class="col-annot">Branch on move _83</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb69</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(x + y &gt; x);</td>
+                    <td class="col-mir">_91 = checked(_1 + _2)</td>
+                    <td class="col-annot">Checked Add (may panic)</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x + y &gt; x);</td>
+                    <td class="col-mir">→ assert(move _91.1 == false) → bb71</td>
+                    <td class="col-annot">Panic if move _91.1 is true</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb70</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x &lt;= x + y - y);</td>
+                    <td class="col-mir">→ _88 = panic([16 bytes])</td>
+                    <td class="col-annot">Call panic</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb71</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(x + y &gt; x);</td>
+                    <td class="col-mir">_90 = move _91.0</td>
+                    <td class="col-annot">Move value</td>
+                </tr>
+                <tr>
+                    <td class="col-source">assert!(x + y &gt; x);</td>
+                    <td class="col-mir">_89 = move _90 &gt; _1</td>
+                    <td class="col-annot">Greater than operation</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x + y &gt; x);</td>
+                    <td class="col-mir">→ switch(move _89) [0→bb73; else→bb72]</td>
+                    <td class="col-annot">Branch on move _89</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb72</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(x + y &gt;= x);</td>
+                    <td class="col-mir">_95 = checked(_1 + _2)</td>
+                    <td class="col-annot">Checked Add (may panic)</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x + y &gt;= x);</td>
+                    <td class="col-mir">→ assert(move _95.1 == false) → bb74</td>
+                    <td class="col-annot">Panic if move _95.1 is true</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb73</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x + y &gt; x);</td>
+                    <td class="col-mir">→ _92 = panic([16 bytes])</td>
+                    <td class="col-annot">Call panic</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb74</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(x + y &gt;= x);</td>
+                    <td class="col-mir">_94 = move _95.0</td>
+                    <td class="col-annot">Move value</td>
+                </tr>
+                <tr>
+                    <td class="col-source">assert!(x + y &gt;= x);</td>
+                    <td class="col-mir">_93 = move _94 &gt;= _1</td>
+                    <td class="col-annot">Greater or equal operation</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x + y &gt;= x);</td>
+                    <td class="col-mir">→ switch(move _93) [0→bb76; else→bb75]</td>
+                    <td class="col-annot">Branch on move _93</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb75</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(x + y - y &gt;= x);</td>
+                    <td class="col-mir">_100 = checked(_1 + _2)</td>
+                    <td class="col-annot">Checked Add (may panic)</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x + y - y &gt;= x);</td>
+                    <td class="col-mir">→ assert(move _100.1 == false) → bb77</td>
+                    <td class="col-annot">Panic if move _100.1 is true</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb76</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x + y &gt;= x);</td>
+                    <td class="col-mir">→ _96 = panic([16 bytes])</td>
+                    <td class="col-annot">Call panic</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb77</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(x + y - y &gt;= x);</td>
+                    <td class="col-mir">_99 = move _100.0</td>
+                    <td class="col-annot">Move value</td>
+                </tr>
+                <tr>
+                    <td class="col-source">assert!(x + y - y &gt;= x);</td>
+                    <td class="col-mir">_101 = checked(_99 - _2)</td>
+                    <td class="col-annot">Checked Subtract (may panic)</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x + y - y &gt;= x);</td>
+                    <td class="col-mir">→ assert(move _101.1 == false) → bb78</td>
+                    <td class="col-annot">Panic if move _101.1 is true</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb78</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">assert!(x + y - y &gt;= x);</td>
+                    <td class="col-mir">_98 = move _101.0</td>
+                    <td class="col-annot">Move value</td>
+                </tr>
+                <tr>
+                    <td class="col-source">assert!(x + y - y &gt;= x);</td>
+                    <td class="col-mir">_97 = move _98 &gt;= _1</td>
+                    <td class="col-annot">Greater or equal operation</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x + y - y &gt;= x);</td>
+                    <td class="col-mir">→ switch(move _97) [0→bb80; else→bb79]</td>
+                    <td class="col-annot">Branch on move _97</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb79</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">}</td>
+                    <td class="col-mir">→ return</td>
+                    <td class="col-annot">Return from function</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb80</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">assert!(x + y - y &gt;= x);</td>
+                    <td class="col-mir">→ _102 = panic([16 bytes])</td>
+                    <td class="col-annot">Call panic</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+<section class="function">
+    <h2>main</h2>
+    <p class="fn-meta">2 basic blocks — <code>main</code></p>
+    <div class="block">
+        <div class="block-header">bb0</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-source">test_binop(x, y);</td>
+                    <td class="col-mir">_2 = 42</td>
+                    <td class="col-annot">Load constant</td>
+                </tr>
+                <tr>
+                    <td class="col-source">test_binop(x, y);</td>
+                    <td class="col-mir">_3 = 10</td>
+                    <td class="col-annot">Load constant</td>
+                </tr>
+                <tr class="terminator">
+                    <td class="col-source">test_binop(x, y);</td>
+                    <td class="col-mir">→ _1 = test_binop(move _2, move _3) → bb1</td>
+                    <td class="col-annot">Call test_binop</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="block">
+        <div class="block-header">bb1</div>
+        <table class="annotated-table">
+            <thead>
+                <tr><th class="col-source">Source</th><th class="col-mir">MIR</th><th class="col-annot">Annotation</th></tr>
+            </thead>
+            <tbody>
+                <tr class="terminator">
+                    <td class="col-source">}</td>
+                    <td class="col-mir">→ return</td>
+                    <td class="col-annot">Return from function</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+</body>
+</html>
