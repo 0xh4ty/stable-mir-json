@@ -4,8 +4,9 @@ pub mod driver;
 pub mod printer;
 use driver::stable_mir_driver;
 use printer::emit_smir;
-use stable_mir_json::mk_graph::{emit_d2file, emit_dotfile};
+use stable_mir_json::explore::emit_explore;
 use stable_mir_json::html::emit_html;
+use stable_mir_json::mk_graph::{emit_d2file, emit_dotfile};
 
 fn main() {
     let mut args: Vec<String> = env::args().collect();
@@ -27,6 +28,10 @@ fn main() {
         Some(arg) if arg == "--html" => {
             args.remove(1);
             stable_mir_driver(&args, emit_html)
+        }
+        Some(arg) if arg == "--explore" => {
+            args.remove(1);
+            stable_mir_driver(&args, emit_explore)
         }
         Some(_other) => stable_mir_driver(&args, emit_smir), // backward compatibility
     }
