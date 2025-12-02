@@ -34,22 +34,22 @@ use crate::MonoItemKind;
 
 /// Complete data for the explorer, serialized to JSON for the browser
 #[derive(Serialize)]
-struct ExplorerData {
+pub struct ExplorerData {
     name: String,
     functions: Vec<ExplorerFunction>,
 }
 
 #[derive(Serialize)]
-struct ExplorerFunction {
-    name: String,
-    short_name: String,
-    blocks: Vec<ExplorerBlock>,
-    locals: Vec<String>, // Type descriptions for each local
-    entry_block: usize,
+pub struct ExplorerFunction {
+    pub name: String,
+    pub short_name: String,
+    pub blocks: Vec<ExplorerBlock>,
+    pub locals: Vec<String>, // Type descriptions for each local
+    pub entry_block: usize,
 }
 
 #[derive(Serialize)]
-struct ExplorerBlock {
+pub struct ExplorerBlock {
     id: usize,
     statements: Vec<ExplorerStmt>,
     terminator: ExplorerTerminator,
@@ -115,9 +115,10 @@ pub fn emit_explore(tcx: TyCtxt<'_>) {
         }
         OutFileName::Real(path) => {
             let out_path = path.with_extension("explore.html");
-            let mut b = BufWriter::new(File::create(&out_path).unwrap_or_else(|e| {
-                panic!("Failed to create {}: {}", out_path.display(), e)
-            }));
+            let mut b = BufWriter::new(
+                File::create(&out_path)
+                    .unwrap_or_else(|e| panic!("Failed to create {}: {}", out_path.display(), e)),
+            );
             write!(b, "{}", html).expect("Failed to write explore.html");
             eprintln!("Wrote {}", out_path.display());
         }
@@ -152,7 +153,7 @@ fn build_explorer_data(smir: &SmirJson) -> ExplorerData {
     }
 }
 
-fn build_explorer_function(name: &str, body: &Body) -> ExplorerFunction {
+pub fn build_explorer_function(name: &str, body: &Body) -> ExplorerFunction {
     let short_name = short_fn_name(name);
 
     // Build blocks with edges
@@ -176,7 +177,12 @@ fn build_explorer_function(name: &str, body: &Body) -> ExplorerFunction {
     // Assign predecessors and compute roles
     for (id, block) in blocks.iter_mut().enumerate() {
         block.predecessors = predecessors[id].clone();
-        block.role = compute_block_role(id, &block.predecessors, &block.terminator, body.blocks.len());
+        block.role = compute_block_role(
+            id,
+            &block.predecessors,
+            &block.terminator,
+            body.blocks.len(),
+        );
         block.summary = block_summary(block);
     }
 
@@ -196,11 +202,7 @@ fn build_explorer_function(name: &str, body: &Body) -> ExplorerFunction {
 }
 
 fn build_explorer_block(id: usize, block: &BasicBlock, current_fn: &str) -> ExplorerBlock {
-    let statements: Vec<ExplorerStmt> = block
-        .statements
-        .iter()
-        .map(|stmt| build_explorer_stmt(stmt))
-        .collect();
+    let statements: Vec<ExplorerStmt> = block.statements.iter().map(build_explorer_stmt).collect();
 
     let terminator = build_explorer_terminator(&block.terminator, current_fn);
 
@@ -447,8 +449,13 @@ fn compute_block_role(
         BlockRole::Entry
     } else if terminator.kind == "return" || terminator.kind == "unreachable" {
         BlockRole::Exit
-    } else if terminator.edges.iter().any(|e| matches!(e.kind, EdgeKind::Cleanup))
-              && terminator.kind != "call" && terminator.kind != "assert" {
+    } else if terminator
+        .edges
+        .iter()
+        .any(|e| matches!(e.kind, EdgeKind::Cleanup))
+        && terminator.kind != "call"
+        && terminator.kind != "assert"
+    {
         BlockRole::Cleanup
     } else if out_count > 1 {
         BlockRole::BranchPoint
@@ -470,10 +477,9 @@ fn block_summary(block: &ExplorerBlock) -> String {
             }
         }
         BlockRole::BranchPoint => format!("Branches: {}", block.terminator.annotation),
-        BlockRole::MergePoint => format!(
-            "Merge point ({} incoming paths)",
-            block.predecessors.len()
-        ),
+        BlockRole::MergePoint => {
+            format!("Merge point ({} incoming paths)", block.predecessors.len())
+        }
         BlockRole::Cleanup => "Cleanup/unwind handler".to_string(),
         BlockRole::Linear => {
             if !block.statements.is_empty() {
