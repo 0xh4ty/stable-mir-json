@@ -296,6 +296,7 @@
         .explorer-context .mir { color: var(--green); }
         .explorer-context .annotation { color: #bd93f9; font-size: 0.75rem; display: block; }
         .explorer-context .term { color: var(--pink); }
+        .explorer-context .locals-list { max-height: 120px; overflow-y: auto; font-size: 0.8rem; color: var(--text-dim); }
         .explorer-edges {
             display: flex;
             flex-direction: column;
@@ -452,19 +453,19 @@ fn main() {
 <text xml:space="preserve" text-anchor="middle" x="467" y="-419.7" font-family="Times,serif" font-size="14.00">_ZN4core6option13unwrap_f</text>
 <text xml:space="preserve" text-anchor="middle" x="467" y="-403.2" font-family="Times,serif" font-size="14.00">ailed17h70bb8fac4436ed8fE</text>
 </g>
-<!-- X5eb86185c1cf8f06_0 -->
+<!-- X8b0ac2e54b9a91_0 -->
 <g id="node2" class="node">
+<title>X8b0ac2e54b9a91_0</title>
+<polygon fill="none" stroke="red" points="652.25,-1145.5 595.75,-1145.5 595.75,-1109.5 652.25,-1109.5 652.25,-1145.5"/>
+<text xml:space="preserve" text-anchor="middle" x="624" y="-1122.45" font-family="Times,serif" font-size="14.00">NoOp: </text>
+</g>
+<!-- X5eb86185c1cf8f06_0 -->
+<g id="node3" class="node">
 <title>X5eb86185c1cf8f06_0</title>
 <polygon fill="none" stroke="red" points="1731.75,-883.5 1564.25,-883.5 1564.25,-826 1731.75,-826 1731.75,-883.5"/>
 <text xml:space="preserve" text-anchor="middle" x="1648" y="-866.2" font-family="Times,serif" font-size="14.00">_ZN3std2rt19lang_start_in</text>
 <text xml:space="preserve" text-anchor="middle" x="1648" y="-849.7" font-family="Times,serif" font-size="14.00">ternal17h035df9ff6960926a</text>
 <text xml:space="preserve" text-anchor="middle" x="1648" y="-833.2" font-family="Times,serif" font-size="14.00">E</text>
-</g>
-<!-- X8b0ac2e54b9a91_0 -->
-<g id="node3" class="node">
-<title>X8b0ac2e54b9a91_0</title>
-<polygon fill="none" stroke="red" points="1707.25,-1145.5 1650.75,-1145.5 1650.75,-1109.5 1707.25,-1109.5 1707.25,-1145.5"/>
-<text xml:space="preserve" text-anchor="middle" x="1679" y="-1122.45" font-family="Times,serif" font-size="14.00">NoOp: </text>
 </g>
 <!-- X3c6542d96320ad67_0 -->
 <g id="node4" class="node">
@@ -984,6 +985,8 @@ fn main() {
                 <h3 id="block-main">bb0</h3>
                 <span class="badge" id="role-main">entry</span>
                 <div class="summary" id="summary-main"></div>
+                <h4>Locals</h4>
+                <ul id="locals-main" class="locals-list"></ul>
                 <h4>Statements</h4>
                 <ul id="stmts-main"></ul>
                 <h4>Terminator</h4>
@@ -1185,12 +1188,16 @@ function resetExplorer(state) {
 }
 
 function updateContext(state, block) {
-    const { id } = state;
+    const { id, data } = state;
     document.getElementById('block-' + id).textContent = 'bb' + block.id;
     const badge = document.getElementById('role-' + id);
     badge.textContent = block.role;
     badge.className = 'badge ' + block.role;
     document.getElementById('summary-' + id).textContent = block.summary;
+
+    // Populate locals
+    const localsList = document.getElementById('locals-' + id);
+    localsList.innerHTML = data.locals.map(l => '<li>' + esc(l) + '</li>').join('');
 
     const stmts = document.getElementById('stmts-' + id);
     stmts.innerHTML = block.statements.length === 0 ? '<li style="color:#888">(none)</li>' :
