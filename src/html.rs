@@ -23,7 +23,7 @@ use stable_mir::mir::{
 use stable_mir::ty::IndexedVal;
 use stable_mir::CrateDef;
 
-use crate::explore::{build_explorer_function, ExplorerFunction};
+use crate::explore::{build_explorer_function, ExplorerFunction, RENDER_LOCAL_JS};
 use crate::printer::{collect_smir, SmirJson};
 use crate::MonoItemKind;
 
@@ -461,6 +461,7 @@ fn generate_html(smir: &SmirJson) -> String {
     <h1>{}</h1>
     {}
     <script>
+    {render_local_js}
     {explorer_js}
     </script>
 </body>
@@ -468,6 +469,7 @@ fn generate_html(smir: &SmirJson) -> String {
         escape_html(&smir.name),
         escape_html(&smir.name),
         content,
+        render_local_js = RENDER_LOCAL_JS,
         explorer_js = EXPLORER_JS
     )
 }
@@ -1185,7 +1187,7 @@ function updateContext(state, block) {
 
     // Populate locals
     const localsList = document.getElementById('locals-' + id);
-    localsList.innerHTML = data.locals.map(l => '<li>' + esc(l) + '</li>').join('');
+    localsList.innerHTML = data.locals.map(l => renderLocalHtml(l, esc)).join('');
 
     const stmts = document.getElementById('stmts-' + id);
     stmts.innerHTML = block.statements.length === 0 ? '<li style="color:#888">(none)</li>' :

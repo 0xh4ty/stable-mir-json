@@ -44,7 +44,7 @@ pub struct ExplorerFunction {
     pub name: String,
     pub short_name: String,
     pub blocks: Vec<ExplorerBlock>,
-    pub locals: Vec<String>, // Type descriptions for each local
+    pub locals: Vec<ExplorerLocal>,
     pub entry_block: usize,
 }
 
@@ -62,6 +62,20 @@ pub struct ExplorerBlock {
 struct ExplorerStmt {
     mir: String,
     annotation: String,
+}
+
+#[derive(Serialize, Clone)]
+pub struct ExplorerAssignment {
+    pub block_id: usize,
+    pub value: String,
+}
+
+#[derive(Serialize)]
+pub struct ExplorerLocal {
+    pub name: String,
+    pub ty: String,
+    pub source_name: Option<String>,
+    pub assignments: Vec<ExplorerAssignment>,
 }
 
 #[derive(Serialize)]
@@ -186,10 +200,58 @@ pub fn build_explorer_function(name: &str, body: &Body) -> ExplorerFunction {
         block.summary = block_summary(block);
     }
 
-    // Collect local type info
-    let locals: Vec<String> = body
+    // Collect local type info and track assignments
+    let num_locals = body.local_decls().count();
+    let mut assignments: Vec<Vec<ExplorerAssignment>> = vec![Vec::new(); num_locals];
+
+    // Scan all blocks for assignments to locals
+    for (block_id, block) in body.blocks.iter().enumerate() {
+        for stmt in &block.statements {
+            if let StatementKind::Assign(place, rvalue) = &stmt.kind {
+                // Only track direct local assignments (not projections)
+                if place.projection.is_empty() {
+                    let local_idx = place.local;
+                    if local_idx < num_locals {
+                        assignments[local_idx].push(ExplorerAssignment {
+                            block_id,
+                            value: render_rvalue(rvalue),
+                        });
+                    }
+                }
+            }
+        }
+    }
+
+    // Build map from local index to source variable name from debug info
+    let mut source_names: std::collections::HashMap<usize, String> =
+        std::collections::HashMap::new();
+    for debug_info in &body.var_debug_info {
+        if let stable_mir::mir::VarDebugInfoContents::Place(place) = &debug_info.value {
+            // Only map direct locals (no projections)
+            if place.projection.is_empty() {
+                source_names.insert(place.local, debug_info.name.clone());
+            }
+        }
+    }
+
+    // Build locals with assignments and source names
+    let locals: Vec<ExplorerLocal> = body
         .local_decls()
-        .map(|(idx, decl)| format!("_{}: {}", idx, decl.ty))
+        .enumerate()
+        .map(|(idx, (local_idx, decl))| {
+            let local_assignments = if idx < assignments.len() {
+                std::mem::take(&mut assignments[idx])
+            } else {
+                Vec::new()
+            };
+            let source_name = source_names.get(&local_idx).cloned();
+            ExplorerLocal {
+                name: format!("_{}", local_idx),
+                ty: format!("{}", decl.ty),
+                source_name,
+                assignments: local_assignments,
+            }
+        })
         .collect();
 
     ExplorerFunction {
@@ -732,6 +794,7 @@ fn generate_explore_html(smir: &SmirJson) -> String {
 
     <script>
 const EXPLORER_DATA = {json};
+{render_local_js}
 {js}
     </script>
 </body>
@@ -739,6 +802,7 @@ const EXPLORER_DATA = {json};
         name = escape_html(&smir.name),
         css = CSS_TEMPLATE,
         json = json_data,
+        render_local_js = RENDER_LOCAL_JS,
         js = JS_TEMPLATE,
     )
 }
@@ -1051,6 +1115,18 @@ body {
 // Embedded JavaScript
 // =============================================================================
 
+/// Shared JS helper for rendering locals - used by both explore.rs and html.rs
+pub const RENDER_LOCAL_JS: &str = r##"
+function renderLocalHtml(local, esc) {
+    const srcName = local.source_name ? ' <span class="annotation">(' + esc(local.source_name) + ')</span>' : '';
+    const assigns = local.assignments.length > 0
+        ? local.assignments.map(a => 'bb' + a.block_id + ': ' + esc(a.value)).join(', ')
+        : '(arg/ret)';
+    return '<li><span class="mir">' + esc(local.name) + ': ' + esc(local.ty) + '</span>' + srcName +
+           '<br><span class="annotation" style="margin-left:1em">' + assigns + '</span></li>';
+}
+"##;
+
 const JS_TEMPLATE: &str = r##"
 class MirExplorer {
     constructor(data) {
@@ -1308,12 +1384,7 @@ class MirExplorer {
 
         // Locals (collapsed by default)
         const localsList = document.getElementById('locals-list');
-        localsList.innerHTML = '';
-        for (const local of this.currentFn.locals) {
-            const li = document.createElement('li');
-            li.textContent = local;
-            localsList.appendChild(li);
-        }
+        localsList.innerHTML = this.currentFn.locals.map(l => renderLocalHtml(l, escapeHtml)).join('');
 
         // Statements
         const stmtList = document.getElementById('stmt-list');
