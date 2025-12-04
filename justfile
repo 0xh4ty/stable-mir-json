@@ -276,3 +276,49 @@ html-graph-file file:
 # List available test programs
 list-tests:
     @ls -1 {{test_dir}}/*.rs | xargs -n1 basename | sed 's/\.rs$//'
+
+# === WASM Explorer ===
+
+# Build WASM explorer (dev)
+wasm-dev:
+    cd mir-explorer && wasm-pack build --dev --target web --out-dir www/pkg
+
+# Build WASM explorer (release)
+wasm-release:
+    cd mir-explorer && wasm-pack build --release --target web --out-dir www/pkg
+
+# Build and serve WASM explorer locally
+wasm-serve: wasm-dev
+    python3 -m http.server 8080 -d mir-explorer/www
+
+# Build project with embedded WASM support
+wasm-embed-build: wasm-release
+    cargo build
+
+# Generate WASM-embedded HTML for all test programs
+html-wasm: wasm-embed-build
+    #!/usr/bin/env bash
+    set -euo pipefail
+    mkdir -p output-html
+    for rust in {{test_dir}}/*.rs; do
+        name=$(basename "${rust%.rs}")
+        echo "Generating WASM explorer for $name..."
+        cargo run -- --wasm-explore -Zno-codegen --out-dir output-html "$rust" 2>/dev/null || true
+        if [ -f "output-html/${name}.wasm-explore.html" ]; then
+            echo "  -> output-html/${name}.wasm-explore.html"
+        fi
+    done
+    # Generate index.html
+    echo "Generating index.html..."
+    ./scripts/generate-index.sh output-html
+    echo "  -> output-html/index.html"
+    echo "Done. WASM explorer HTML files in output-html/"
+
+# Generate WASM-embedded HTML for a single file
+html-wasm-file file: wasm-embed-build
+    #!/usr/bin/env bash
+    set -euo pipefail
+    mkdir -p output-html
+    name=$(basename "{{file}}" .rs)
+    cargo run -- --wasm-explore -Zno-codegen --out-dir output-html "{{file}}"
+    echo "Generated: output-html/${name}.wasm-explore.html"

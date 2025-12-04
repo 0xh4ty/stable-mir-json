@@ -64,6 +64,13 @@ for html in "$outdir"/*.smir.html; do
     echo "        <a class=\"card\" href=\"${name}.smir.html\"><div class=\"card-title\">${name}</div></a>" >> "$outdir/index.html"
 done
 
+# Add a card for each .wasm-explore.html file
+for html in "$outdir"/*.wasm-explore.html; do
+    [ -f "$html" ] || continue
+    name=$(basename "$html" .wasm-explore.html)
+    echo "        <a class=\"card\" href=\"${name}.wasm-explore.html\"><div class=\"card-title\">${name} (wasm)</div></a>" >> "$outdir/index.html"
+done
+
 cat >> "$outdir/index.html" << 'EOF'
     </div>
 </body>

@@ -141,11 +141,33 @@ pub fn emit_explore(tcx: TyCtxt<'_>) {
     }
 }
 
+/// Entry point to generate the explorer JSON file (for WASM explorer)
+pub fn emit_explore_json(tcx: TyCtxt<'_>) {
+    let smir = collect_smir(tcx);
+    let data = build_explorer_data(&smir);
+    let json = serde_json::to_string_pretty(&data).expect("Failed to serialize explorer data");
+
+    match tcx.output_filenames(()).path(OutputType::Mir) {
+        OutFileName::Stdout => {
+            write!(io::stdout(), "{}", json).expect("Failed to write JSON");
+        }
+        OutFileName::Real(path) => {
+            let out_path = path.with_extension("explore.json");
+            let mut b = BufWriter::new(
+                File::create(&out_path)
+                    .unwrap_or_else(|e| panic!("Failed to create {}: {}", out_path.display(), e)),
+            );
+            write!(b, "{}", json).expect("Failed to write explore.json");
+            eprintln!("Wrote {}", out_path.display());
+        }
+    }
+}
+
 // =============================================================================
 // Data Building
 // =============================================================================
 
-fn build_explorer_data(smir: &SmirJson) -> ExplorerData {
+pub fn build_explorer_data(smir: &SmirJson) -> ExplorerData {
     let mut functions = Vec::new();
 
     for item in &smir.items {

@@ -50,6 +50,22 @@ format:
 style-check: format
 	cargo clippy
 
+# MIR Explorer WASM targets
+.PHONY: wasm-dev wasm-release wasm-serve wasm-embed-build
+
+wasm-dev:
+	cd mir-explorer && wasm-pack build --dev --target web --out-dir www/pkg
+
+wasm-release:
+	cd mir-explorer && wasm-pack build --release --target web --out-dir www/pkg
+
+wasm-serve: wasm-dev
+	python3 -m http.server 8080 -d mir-explorer/www
+
+# Build with embedded WASM support (requires WASM to be built first)
+wasm-embed-build: wasm-release
+	cargo build ${RELEASE_FLAG}
+
 .PHONY: remake-ui-tests test-ui
 
 remake-ui-tests:

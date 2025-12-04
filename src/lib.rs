@@ -6,5 +6,6 @@ pub mod html;
 pub mod mk_graph;
 pub mod printer;
 pub mod render;
+pub mod wasm_embed;
 pub use driver::stable_mir_driver;
 pub use printer::*;

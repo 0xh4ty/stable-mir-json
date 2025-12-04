@@ -1,0 +1,5 @@
+[alias]
+# Build the mir-explorer WASM crate
+wasm-dev = "build --manifest-path mir-explorer/Cargo.toml --target wasm32-unknown-unknown"
+wasm-release = "build --manifest-path mir-explorer/Cargo.toml --target wasm32-unknown-unknown --release"
+wasm-check = "check --manifest-path mir-explorer/Cargo.toml --target wasm32-unknown-unknown"

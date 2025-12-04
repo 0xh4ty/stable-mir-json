@@ -10,6 +10,7 @@ default-run = "stable_mir_json"
 dot-writer = "0.1.4"
 anyhow = "1"
 home = "0.5"
+base64 = "0.22"
 
 [[bin]]
 name = "cargo_stable_mir_json"
