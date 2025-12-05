@@ -281,11 +281,11 @@ list-tests:
 
 # Build WASM explorer (dev)
 wasm-dev:
-    cd mir-explorer && wasm-pack build --dev --target web --out-dir www/pkg
+    wasm-pack build --dev --target web --out-dir www/pkg mir-explorer
 
 # Build WASM explorer (release)
 wasm-release:
-    cd mir-explorer && wasm-pack build --release --target web --out-dir www/pkg
+    wasm-pack build --release --target web --out-dir www/pkg mir-explorer
 
 # Build and serve WASM explorer locally
 wasm-serve: wasm-dev

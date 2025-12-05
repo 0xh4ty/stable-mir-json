@@ -1,3 +1,6 @@
+[workspace]
+members = ["mir-explorer"]
+
 [package]
 name = "stable_mir_json"
 version = "0.1.0"
@@ -22,3 +25,10 @@ debug_log = []
 [package.metadata.rust-analyzer]
 # This package uses rustc crates.
 rustc_private=true
+
+# Optimize mir-explorer WASM for size
+[profile.release.package.mir-explorer]
+opt-level = "s"
+
+[profile.release]
+lto = "thin"

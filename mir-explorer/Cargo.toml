@@ -36,7 +36,3 @@ features = [
     "TextMetrics",
     "console",
 ]
-
-[profile.release]
-opt-level = "s"
-lto = true

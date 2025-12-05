@@ -54,10 +54,10 @@ style-check: format
 .PHONY: wasm-dev wasm-release wasm-serve wasm-embed-build
 
 wasm-dev:
-	cd mir-explorer && wasm-pack build --dev --target web --out-dir www/pkg
+	wasm-pack build --dev --target web --out-dir www/pkg mir-explorer
 
 wasm-release:
-	cd mir-explorer && wasm-pack build --release --target web --out-dir www/pkg
+	wasm-pack build --release --target web --out-dir www/pkg mir-explorer
 
 wasm-serve: wasm-dev
 	python3 -m http.server 8080 -d mir-explorer/www
