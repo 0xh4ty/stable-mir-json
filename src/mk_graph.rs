@@ -15,7 +15,7 @@ use rustc_session::config::{OutFileName, OutputType};
 
 extern crate rustc_session;
 use stable_mir::mir::alloc::GlobalAlloc;
-use stable_mir::ty::{ConstantKind, IndexedVal, MirConst, Ty};
+use stable_mir::ty::{ConstDef, ConstantKind, IndexedVal, MirConst, Ty};
 use stable_mir::CrateDef;
 use stable_mir::{
     mir::{
@@ -66,6 +66,7 @@ pub struct GraphContext {
     pub allocs: AllocIndex,
     pub types: TypeIndex,
     pub functions: HashMap<Ty, String>,
+    pub uneval_consts: HashMap<ConstDef, String>,
 }
 
 // =============================================================================
@@ -250,11 +251,14 @@ impl GraphContext {
             .iter()
             .map(|(k, v)| (k.0, function_string(v.clone())))
             .collect();
+        let uneval_consts: HashMap<ConstDef, String> =
+            smir.uneval_consts.iter().cloned().collect();
 
         Self {
             allocs,
             types,
             functions,
+            uneval_consts,
         }
     }
 
@@ -299,7 +303,11 @@ impl GraphContext {
                 }
             }
             ConstantKind::Ty(_) => format!("const {}", ty_name),
-            ConstantKind::Unevaluated(_) => format!("const unevaluated {}", ty_name),
+            ConstantKind::Unevaluated(uneval) => self
+                .uneval_consts
+                .get(&uneval.def)
+                .map(|name| format!("const {}", name))
+                .unwrap_or_else(|| format!("const unevaluated {}", ty_name)),
             ConstantKind::Param(_) => format!("const param {}", ty_name),
         }
     }
