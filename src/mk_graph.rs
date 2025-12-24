@@ -46,6 +46,8 @@ pub struct AllocEntry {
     pub ty: Ty,
     pub kind: AllocKind,
     pub description: String,
+    /// IDs of allocs referenced via provenance (for nested traversal)
+    pub referenced_allocs: Vec<u64>,
 }
 
 /// Simplified allocation kind for display
@@ -140,6 +142,34 @@ impl AllocIndex {
             None => format!("alloc{}", id),
         }
     }
+
+    /// Describe an alloc with its nested references (depth-limited to avoid explosion)
+    pub fn describe_with_refs(&self, id: u64, max_depth: usize) -> String {
+        self.describe_recursive(id, max_depth, &mut HashSet::new())
+    }
+
+    fn describe_recursive(&self, id: u64, depth: usize, visited: &mut HashSet<u64>) -> String {
+        if depth == 0 || visited.contains(&id) {
+            return self.describe(id);
+        }
+        visited.insert(id);
+
+        match self.get(id) {
+            Some(entry) => {
+                if entry.referenced_allocs.is_empty() {
+                    entry.short_description()
+                } else {
+                    let refs: Vec<String> = entry
+                        .referenced_allocs
+                        .iter()
+                        .map(|&ref_id| self.describe_recursive(ref_id, depth - 1, visited))
+                        .collect();
+                    format!("{} -> [{}]", entry.short_description(), refs.join(", "))
+                }
+            }
+            None => format!("alloc{}", id),
+        }
+    }
 }
 
 impl AllocEntry {
@@ -148,10 +178,18 @@ impl AllocEntry {
         let ty = info.ty();
         let ty_name = type_index.get_name(ty);
 
-        let (kind, description) = match info.global_alloc() {
+        let (kind, description, referenced_allocs) = match info.global_alloc() {
             GlobalAlloc::Memory(alloc) => {
                 let bytes = &alloc.bytes;
                 let is_str = ty_name.contains("str");
+
+                // Extract referenced alloc IDs from provenance
+                let refs: Vec<u64> = alloc
+                    .provenance
+                    .ptrs
+                    .iter()
+                    .map(|(_offset, prov)| prov.0.to_index() as u64)
+                    .collect();
 
                 // Convert Option<u8> bytes to actual bytes for display
                 let concrete_bytes: Vec<u8> = bytes.iter().filter_map(|&b| b).collect();
@@ -181,6 +219,7 @@ impl AllocEntry {
                         is_str,
                     },
                     desc,
+                    refs,
                 )
             }
             GlobalAlloc::Static(def) => {
@@ -188,6 +227,7 @@ impl AllocEntry {
                 (
                     AllocKind::Static { name: name.clone() },
                     format!("static {}", name),
+                    vec![],
                 )
             }
             GlobalAlloc::VTable(vty, trait_ref) => {
@@ -203,6 +243,7 @@ impl AllocEntry {
                         ty_desc: desc.clone(),
                     },
                     format!("vtable<{}>", desc),
+                    vec![],
                 )
             }
             GlobalAlloc::Function(instance) => {
@@ -210,6 +251,7 @@ impl AllocEntry {
                 (
                     AllocKind::Function { name: name.clone() },
                     format!("fn {}", name),
+                    vec![],
                 )
             }
         };
@@ -219,6 +261,7 @@ impl AllocEntry {
             ty,
             kind,
             description,
+            referenced_allocs,
         }
     }
 
@@ -365,11 +408,14 @@ impl GraphContext {
             ConstantKind::Allocated(alloc) => {
                 // Check if this constant references any allocs via provenance
                 if !alloc.provenance.ptrs.is_empty() {
+                    // Use depth 2 to show nested references without explosion
                     let alloc_refs: Vec<String> = alloc
                         .provenance
                         .ptrs
                         .iter()
-                        .map(|(_offset, prov)| self.allocs.describe(prov.0.to_index() as u64))
+                        .map(|(_offset, prov)| {
+                            self.allocs.describe_with_refs(prov.0.to_index() as u64, 2)
+                        })
                         .collect();
                     format!("const [{}]", alloc_refs.join(", "))
                 } else {
