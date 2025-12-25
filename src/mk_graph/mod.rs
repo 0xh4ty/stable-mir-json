@@ -77,4 +77,5 @@ pub fn emit_d2file(tcx: TyCtxt<'_>) {
 
 // Re-export document format entry points
 pub use output::markdown::emit_mdfile;
+pub use output::stdout::emit_stdout;
 pub use output::typst::emit_typstfile;

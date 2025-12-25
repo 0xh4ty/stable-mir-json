@@ -145,6 +145,18 @@ typst-pdf file:
 # Generate all output formats
 all: html dot d2 md typst
 
+# Show annotated MIR for a file in the terminal
+show file:
+    cargo run -- --stdout -Zno-codegen "{{file}}"
+
+# Show annotated MIR for a file (release build, faster)
+show-release file:
+    cargo run --release -- --stdout -Zno-codegen "{{file}}"
+
+# Show annotated MIR for a file with pager
+show-paged file:
+    cargo run --release -- --stdout -Zno-codegen "{{file}}" | less -R
+
 # Generate HTML with embedded SVG call graph (collapsible)
 html-graph:
     #!/usr/bin/env bash
