@@ -110,13 +110,13 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_1 = 42`], [Load constant],
-  [`\_2 = &\_1`], [Shared borrow],
-  [`\_3 = &\_2`], [Shared borrow],
-  [`\_6 = copy\_deref((\*\_3))`], [],
-  [`\_2 = \_6`], [Copy value],
-  [`\_4 = (\*\_2)`], [Copy value],
-  [`→ switch(move \_4) \[42→bb1; else→bb2\]`], [Branch on move \_4],
+  [`_1 = 42`], [Load constant],
+  [`_2 = &_1`], [Shared borrow],
+  [`_3 = &_2`], [Shared borrow],
+  [`_6 = copy_deref((*_3))`], [],
+  [`_2 = _6`], [Copy value],
+  [`_4 = (*_2)`], [Copy value],
+  [`→ switch(move _4) [42→bb1; else→bb2]`], [Branch on move \_4],
 )
 
 === bb1 #text(fill: rgb("#888888"), weight: "regular")[ — return / success]
@@ -138,7 +138,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_5 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _5 = panic([16 bytes])`], [Call panic],
 )
 
 == Key Observations

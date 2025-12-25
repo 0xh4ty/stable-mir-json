@@ -178,7 +178,7 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ switch(\_1) \[0→bb2; else→bb1\]`], [Branch on \_1],
+  [`→ switch(_1) [0→bb2; else→bb1]`], [Branch on \_1],
 )
 
 === bb1
@@ -187,8 +187,8 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_4 = checked(\_1 - 1)`], [Checked Subtract (may panic)],
-  [`→ assert(move \_4.1 == false) → bb3`], [Panic if move \_4.1 is true],
+  [`_4 = checked(_1 - 1)`], [Checked Subtract (may panic)],
+  [`→ assert(move _4.1 == false) → bb3`], [Panic if move \_4.1 is true],
 )
 
 === bb2
@@ -197,7 +197,7 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_0 = 0`], [Load constant],
+  [`_0 = 0`], [Load constant],
   [`→ goto bb6`], [Jump to bb6],
 )
 
@@ -207,8 +207,8 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_3 = move \_4.0`], [Move value],
-  [`→ \_2 = sum\_to\_n\_rec(move \_3) → bb4`], [Recursive call to sum\_to\_n\_rec],
+  [`_3 = move _4.0`], [Move value],
+  [`→ _2 = sum_to_n_rec(move _3) → bb4`], [Recursive call to sum\_to\_n\_rec],
 )
 
 === bb4
@@ -217,8 +217,8 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_5 = checked(\_1 + \_2)`], [Checked Add (may panic)],
-  [`→ assert(move \_5.1 == false) → bb5`], [Panic if move \_5.1 is true],
+  [`_5 = checked(_1 + _2)`], [Checked Add (may panic)],
+  [`→ assert(move _5.1 == false) → bb5`], [Panic if move \_5.1 is true],
 )
 
 === bb5
@@ -227,7 +227,7 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_0 = move \_5.0`], [Move value],
+  [`_0 = move _5.0`], [Move value],
   [`→ goto bb6`], [Jump to bb6],
 )
 
@@ -362,7 +362,7 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_1 = sum\_to\_n\_rec(10) → bb1`], [Call sum\_to\_n\_rec],
+  [`→ _1 = sum_to_n_rec(10) → bb1`], [Call sum\_to\_n\_rec],
 )
 
 === bb1 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -371,7 +371,7 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ switch(\_1) \[55→bb2; else→bb3\]`], [Branch on \_1],
+  [`→ switch(_1) [55→bb2; else→bb3]`], [Branch on \_1],
 )
 
 === bb2 #text(fill: rgb("#888888"), weight: "regular")[ — return / success]
@@ -393,7 +393,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_2 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _2 = panic([16 bytes])`], [Call panic],
 )
 
 == Key Observations

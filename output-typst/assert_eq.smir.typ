@@ -64,7 +64,7 @@ fn main() {
   [`11`], [`i32`], [],
   [`12`], [`core::panicking::AssertKind`], [],
   [`13`], [`!`], [],
-  [`14`], [`std::option::Option\<std::fmt::Arguments\<'\_\>\>`], [],
+  [`14`], [`std::option::Option<std::fmt::Arguments<'_>>`], [],
 )
 
 == Control-Flow Overview
@@ -134,9 +134,9 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_1 = 42`], [Load constant],
-  [`\_3 = checked(3 + 39)`], [Checked Add (may panic)],
-  [`→ assert(move \_3.1 == false) → bb1`], [Panic if move \_3.1 is true],
+  [`_1 = 42`], [Load constant],
+  [`_3 = checked(3 + 39)`], [Checked Add (may panic)],
+  [`→ assert(move _3.1 == false) → bb1`], [Panic if move \_3.1 is true],
 )
 
 === bb1 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -145,16 +145,16 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_2 = move \_3.0`], [Move value],
-  [`\_5 = &\_2`], [Shared borrow],
-  [`\_6 = &\_1`], [Shared borrow],
-  [`\_4 = Tuple(move \_5, move \_6)`], [Construct aggregate],
-  [`\_7 = \_4.0`], [Copy value],
-  [`\_8 = \_4.1`], [Copy value],
-  [`\_10 = (\*\_7)`], [Copy value],
-  [`\_11 = (\*\_8)`], [Copy value],
-  [`\_9 = move \_10 == move \_11`], [Equal operation],
-  [`→ switch(move \_9) \[0→bb3; else→bb2\]`], [Branch on move \_9],
+  [`_2 = move _3.0`], [Move value],
+  [`_5 = &_2`], [Shared borrow],
+  [`_6 = &_1`], [Shared borrow],
+  [`_4 = Tuple(move _5, move _6)`], [Construct aggregate],
+  [`_7 = _4.0`], [Copy value],
+  [`_8 = _4.1`], [Copy value],
+  [`_10 = (*_7)`], [Copy value],
+  [`_11 = (*_8)`], [Copy value],
+  [`_9 = move _10 == move _11`], [Equal operation],
+  [`→ switch(move _9) [0→bb3; else→bb2]`], [Branch on move \_9],
 )
 
 === bb2 #text(fill: rgb("#888888"), weight: "regular")[ — return / success]
@@ -176,9 +176,9 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_12 = AssertKind::Eq()`], [Construct aggregate],
-  [`\_14 = Option::None()`], [Construct aggregate],
-  [`→ \_13 = assert\_failed(move \_12, \_7, \_8, move \_14)`], [Call assert\_failed],
+  [`_12 = AssertKind::Eq()`], [Construct aggregate],
+  [`_14 = Option::None()`], [Construct aggregate],
+  [`→ _13 = assert_failed(move _12, _7, _8, move _14)`], [Call assert\_failed],
 )
 
 == Key Observations

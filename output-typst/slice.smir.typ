@@ -50,14 +50,14 @@ fn main() {
   align: (center, left, left),
   [*Local*], [*Type*], [*Notes*],
   [`0`], [`()`], [Return place],
-  [`1`], [`\[i32; 4\]`], [],
-  [`2`], [`&\[i32\]`], [],
-  [`3`], [`&\[i32\]`], [],
-  [`4`], [`&\[i32; 4\]`], [],
-  [`5`], [`std::ops::Range\<usize\>`], [],
+  [`1`], [`[i32; 4]`], [],
+  [`2`], [`&[i32]`], [],
+  [`3`], [`&[i32]`], [],
+  [`4`], [`&[i32; 4]`], [],
+  [`5`], [`std::ops::Range<usize>`], [],
   [`6`], [`bool`], [],
-  [`7`], [`&&\[i32\]`], [],
-  [`8`], [`&\[i32; 2\]`], [],
+  [`7`], [`&&[i32]`], [],
+  [`8`], [`&[i32; 2]`], [],
   [`9`], [`!`], [],
 )
 
@@ -143,10 +143,10 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_1 = Array(1, 2, 3, 4)`], [Construct aggregate],
-  [`\_4 = &\_1`], [Shared borrow],
-  [`\_5 = Range(1, 3)`], [Construct aggregate],
-  [`→ \_3 = index(move \_4, move \_5) → bb1`], [Call index],
+  [`_1 = Array(1, 2, 3, 4)`], [Construct aggregate],
+  [`_4 = &_1`], [Shared borrow],
+  [`_5 = Range(1, 3)`], [Construct aggregate],
+  [`→ _3 = index(move _4, move _5) → bb1`], [Call index],
 )
 
 === bb1
@@ -155,10 +155,10 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_2 = \_3`], [Copy value],
-  [`\_7 = &\_2`], [Shared borrow],
-  [`\_8 = 0`], [Load constant],
-  [`→ \_6 = eq(move \_7, move \_8) → bb2`], [Call eq],
+  [`_2 = _3`], [Copy value],
+  [`_7 = &_2`], [Shared borrow],
+  [`_8 = 0`], [Load constant],
+  [`→ _6 = eq(move _7, move _8) → bb2`], [Call eq],
 )
 
 === bb2 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -167,7 +167,7 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ switch(move \_6) \[0→bb4; else→bb3\]`], [Branch on move \_6],
+  [`→ switch(move _6) [0→bb4; else→bb3]`], [Branch on move \_6],
 )
 
 === bb3 #text(fill: rgb("#888888"), weight: "regular")[ — return / success]
@@ -189,7 +189,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_9 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _9 = panic([16 bytes])`], [Call panic],
 )
 
 == Key Observations

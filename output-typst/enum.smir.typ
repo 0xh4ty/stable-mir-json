@@ -67,7 +67,7 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_1 = Letter::A()`], [Construct aggregate],
+  [`_1 = Letter::A()`], [Construct aggregate],
   [`→ return`], [Return from function],
 )
 

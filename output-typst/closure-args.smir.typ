@@ -46,9 +46,9 @@
   align: (center, left, left),
   [*Local*], [*Type*], [*Notes*],
   [`0`], [`()`], [Return place],
-  [`1`], [`{closure\@tests/integration/programs/closure-args.rs:2:15: 2:28}`], [],
+  [`1`], [`{closure@tests/integration/programs/closure-args.rs:2:15: 2:28}`], [],
   [`2`], [`i32`], [],
-  [`3`], [`&{closure\@tests/integration/programs/closure-args.rs:2:15: 2:28}`], [],
+  [`3`], [`&{closure@tests/integration/programs/closure-args.rs:2:15: 2:28}`], [],
   [`4`], [`(i32, i32)`], [],
   [`5`], [`!`], [],
 )
@@ -120,9 +120,9 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_3 = &\_1`], [Shared borrow],
-  [`\_4 = Tuple(20, 22)`], [Construct aggregate],
-  [`→ \_2 = call(move \_3, move \_4) → bb1`], [Call call],
+  [`_3 = &_1`], [Shared borrow],
+  [`_4 = Tuple(20, 22)`], [Construct aggregate],
+  [`→ _2 = call(move _3, move _4) → bb1`], [Call call],
 )
 
 === bb1 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -131,7 +131,7 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ switch(move \_2) \[42→bb2; else→bb3\]`], [Branch on move \_2],
+  [`→ switch(move _2) [42→bb2; else→bb3]`], [Branch on move \_2],
 )
 
 === bb2 #text(fill: rgb("#888888"), weight: "regular")[ — return / success]
@@ -153,7 +153,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_5 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _5 = panic([16 bytes])`], [Call panic],
 )
 
 == Key Observations
@@ -203,7 +203,7 @@ fn main() {
   align: (center, left, left),
   [*Local*], [*Type*], [*Notes*],
   [`0`], [`i32`], [Return place],
-  [`1`], [`&{closure\@tests/integration/programs/closure-args.rs:2:15: 2:28}`], [],
+  [`1`], [`&{closure@tests/integration/programs/closure-args.rs:2:15: 2:28}`], [],
   [`2`], [`i32`], [],
   [`3`], [`i32`], [],
   [`4`], [`(i32, bool)`], [],
@@ -246,8 +246,8 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_4 = checked(\_2 + \_3)`], [Checked Add (may panic)],
-  [`→ assert(move \_4.1 == false) → bb1`], [Panic if move \_4.1 is true],
+  [`_4 = checked(_2 + _3)`], [Checked Add (may panic)],
+  [`→ assert(move _4.1 == false) → bb1`], [Panic if move \_4.1 is true],
 )
 
 === bb1 #text(fill: rgb("#888888"), weight: "regular")[ — return / success]
@@ -258,7 +258,7 @@ _Normal return path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_0 = move \_4.0`], [Move value],
+  [`_0 = move _4.0`], [Move value],
   [`→ return`], [Return from function],
 )
 

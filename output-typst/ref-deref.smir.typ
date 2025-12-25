@@ -108,10 +108,10 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_1 = 42`], [Load constant],
-  [`\_2 = &\_1`], [Shared borrow],
-  [`\_3 = (\*\_2)`], [Copy value],
-  [`→ switch(\_3) \[42→bb1; else→bb2\]`], [Branch on \_3],
+  [`_1 = 42`], [Load constant],
+  [`_2 = &_1`], [Shared borrow],
+  [`_3 = (*_2)`], [Copy value],
+  [`→ switch(_3) [42→bb1; else→bb2]`], [Branch on \_3],
 )
 
 === bb1 #text(fill: rgb("#888888"), weight: "regular")[ — return / success]
@@ -133,7 +133,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_4 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _4 = panic([16 bytes])`], [Call panic],
 )
 
 == Key Observations

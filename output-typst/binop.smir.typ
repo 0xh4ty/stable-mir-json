@@ -1436,8 +1436,8 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_4 = checked(\_1 + \_2)`], [Checked Add (may panic)],
-  [`→ assert(move \_4.1 == false) → bb1`], [Panic if move \_4.1 is true],
+  [`_4 = checked(_1 + _2)`], [Checked Add (may panic)],
+  [`→ assert(move _4.1 == false) → bb1`], [Panic if move \_4.1 is true],
 )
 
 === bb1 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -1446,8 +1446,8 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_3 = move \_4.0`], [Move value],
-  [`→ switch(move \_3) \[52→bb2; else→bb3\]`], [Branch on move \_3],
+  [`_3 = move _4.0`], [Move value],
+  [`→ switch(move _3) [52→bb2; else→bb3]`], [Branch on move \_3],
 )
 
 === bb2
@@ -1456,8 +1456,8 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_7 = checked(\_1 + \_2)`], [Checked Add (may panic)],
-  [`→ assert(move \_7.1 == false) → bb4`], [Panic if move \_7.1 is true],
+  [`_7 = checked(_1 + _2)`], [Checked Add (may panic)],
+  [`→ assert(move _7.1 == false) → bb4`], [Panic if move \_7.1 is true],
 )
 
 === bb3 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
@@ -1468,7 +1468,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_5 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _5 = panic([16 bytes])`], [Call panic],
 )
 
 === bb4 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -1477,8 +1477,8 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_6 = move \_7.0`], [Move value],
-  [`→ switch(move \_6) \[52→bb5; else→bb6\]`], [Branch on move \_6],
+  [`_6 = move _7.0`], [Move value],
+  [`→ switch(move _6) [52→bb5; else→bb6]`], [Branch on move \_6],
 )
 
 === bb5
@@ -1487,8 +1487,8 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_11 = checked(\_1 + \_2)`], [Checked Add (may panic)],
-  [`→ assert(move \_11.1 == false) → bb7`], [Panic if move \_11.1 is true],
+  [`_11 = checked(_1 + _2)`], [Checked Add (may panic)],
+  [`→ assert(move _11.1 == false) → bb7`], [Panic if move \_11.1 is true],
 )
 
 === bb6 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
@@ -1499,7 +1499,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_8 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _8 = panic([16 bytes])`], [Call panic],
 )
 
 === bb7
@@ -1508,9 +1508,9 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_10 = move \_11.0`], [Move value],
-  [`\_13 = checked(\_2 + \_1)`], [Checked Add (may panic)],
-  [`→ assert(move \_13.1 == false) → bb8`], [Panic if move \_13.1 is true],
+  [`_10 = move _11.0`], [Move value],
+  [`_13 = checked(_2 + _1)`], [Checked Add (may panic)],
+  [`→ assert(move _13.1 == false) → bb8`], [Panic if move \_13.1 is true],
 )
 
 === bb8 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -1519,9 +1519,9 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_12 = move \_13.0`], [Move value],
-  [`\_9 = move \_10 == move \_12`], [Equal operation],
-  [`→ switch(move \_9) \[0→bb10; else→bb9\]`], [Branch on move \_9],
+  [`_12 = move _13.0`], [Move value],
+  [`_9 = move _10 == move _12`], [Equal operation],
+  [`→ switch(move _9) [0→bb10; else→bb9]`], [Branch on move \_9],
 )
 
 === bb9
@@ -1530,8 +1530,8 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_16 = checked(\_1 - \_2)`], [Checked Subtract (may panic)],
-  [`→ assert(move \_16.1 == false) → bb11`], [Panic if move \_16.1 is true],
+  [`_16 = checked(_1 - _2)`], [Checked Subtract (may panic)],
+  [`→ assert(move _16.1 == false) → bb11`], [Panic if move \_16.1 is true],
 )
 
 === bb10 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
@@ -1542,7 +1542,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_14 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _14 = panic([16 bytes])`], [Call panic],
 )
 
 === bb11 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -1551,8 +1551,8 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_15 = move \_16.0`], [Move value],
-  [`→ switch(move \_15) \[32→bb12; else→bb13\]`], [Branch on move \_15],
+  [`_15 = move _16.0`], [Move value],
+  [`→ switch(move _15) [32→bb12; else→bb13]`], [Branch on move \_15],
 )
 
 === bb12
@@ -1561,8 +1561,8 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_19 = checked(\_2 - \_1)`], [Checked Subtract (may panic)],
-  [`→ assert(move \_19.1 == false) → bb14`], [Panic if move \_19.1 is true],
+  [`_19 = checked(_2 - _1)`], [Checked Subtract (may panic)],
+  [`→ assert(move _19.1 == false) → bb14`], [Panic if move \_19.1 is true],
 )
 
 === bb13 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
@@ -1573,7 +1573,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_17 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _17 = panic([16 bytes])`], [Call panic],
 )
 
 === bb14 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -1582,8 +1582,8 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_18 = move \_19.0`], [Move value],
-  [`→ switch(move \_18) \[4294967264→bb15; else→bb16\]`], [Branch on move \_18],
+  [`_18 = move _19.0`], [Move value],
+  [`→ switch(move _18) [4294967264→bb15; else→bb16]`], [Branch on move \_18],
 )
 
 === bb15
@@ -1592,8 +1592,8 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_23 = checked(\_2 - \_1)`], [Checked Subtract (may panic)],
-  [`→ assert(move \_23.1 == false) → bb17`], [Panic if move \_23.1 is true],
+  [`_23 = checked(_2 - _1)`], [Checked Subtract (may panic)],
+  [`→ assert(move _23.1 == false) → bb17`], [Panic if move \_23.1 is true],
 )
 
 === bb16 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
@@ -1604,7 +1604,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_20 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _20 = panic([16 bytes])`], [Call panic],
 )
 
 === bb17
@@ -1613,9 +1613,9 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_22 = move \_23.0`], [Move value],
-  [`\_25 = checked(\_1 - \_2)`], [Checked Subtract (may panic)],
-  [`→ assert(move \_25.1 == false) → bb18`], [Panic if move \_25.1 is true],
+  [`_22 = move _23.0`], [Move value],
+  [`_25 = checked(_1 - _2)`], [Checked Subtract (may panic)],
+  [`→ assert(move _25.1 == false) → bb18`], [Panic if move \_25.1 is true],
 )
 
 === bb18 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -1624,9 +1624,9 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_24 = move \_25.0`], [Move value],
-  [`\_21 = move \_22 != move \_24`], [Not equal operation],
-  [`→ switch(move \_21) \[0→bb20; else→bb19\]`], [Branch on move \_21],
+  [`_24 = move _25.0`], [Move value],
+  [`_21 = move _22 != move _24`], [Not equal operation],
+  [`→ switch(move _21) [0→bb20; else→bb19]`], [Branch on move \_21],
 )
 
 === bb19
@@ -1635,8 +1635,8 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_28 = checked(\_1 \* \_2)`], [Checked Multiply (may panic)],
-  [`→ assert(move \_28.1 == false) → bb21`], [Panic if move \_28.1 is true],
+  [`_28 = checked(_1 * _2)`], [Checked Multiply (may panic)],
+  [`→ assert(move _28.1 == false) → bb21`], [Panic if move \_28.1 is true],
 )
 
 === bb20 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
@@ -1647,7 +1647,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_26 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _26 = panic([16 bytes])`], [Call panic],
 )
 
 === bb21 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -1656,8 +1656,8 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_27 = move \_28.0`], [Move value],
-  [`→ switch(move \_27) \[420→bb22; else→bb23\]`], [Branch on move \_27],
+  [`_27 = move _28.0`], [Move value],
+  [`→ switch(move _27) [420→bb22; else→bb23]`], [Branch on move \_27],
 )
 
 === bb22
@@ -1666,8 +1666,8 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_32 = \_2 == -2147483648`], [Equal operation],
-  [`→ assert(move \_32 == false) → bb24`], [Panic if move \_32 is true],
+  [`_32 = _2 == -2147483648`], [Equal operation],
+  [`→ assert(move _32 == false) → bb24`], [Panic if move \_32 is true],
 )
 
 === bb23 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
@@ -1678,7 +1678,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_29 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _29 = panic([16 bytes])`], [Call panic],
 )
 
 === bb24
@@ -1687,9 +1687,9 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_31 = -\_2`], [Negation],
-  [`\_33 = checked(\_1 \* \_31)`], [Checked Multiply (may panic)],
-  [`→ assert(move \_33.1 == false) → bb25`], [Panic if move \_33.1 is true],
+  [`_31 = -_2`], [Negation],
+  [`_33 = checked(_1 * _31)`], [Checked Multiply (may panic)],
+  [`→ assert(move _33.1 == false) → bb25`], [Panic if move \_33.1 is true],
 )
 
 === bb25 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -1698,8 +1698,8 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_30 = move \_33.0`], [Move value],
-  [`→ switch(move \_30) \[4294966876→bb26; else→bb27\]`], [Branch on move \_30],
+  [`_30 = move _33.0`], [Move value],
+  [`→ switch(move _30) [4294966876→bb26; else→bb27]`], [Branch on move \_30],
 )
 
 === bb26
@@ -1708,8 +1708,8 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_37 = \_1 == -2147483648`], [Equal operation],
-  [`→ assert(move \_37 == false) → bb28`], [Panic if move \_37 is true],
+  [`_37 = _1 == -2147483648`], [Equal operation],
+  [`→ assert(move _37 == false) → bb28`], [Panic if move \_37 is true],
 )
 
 === bb27 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
@@ -1720,7 +1720,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_34 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _34 = panic([16 bytes])`], [Call panic],
 )
 
 === bb28
@@ -1729,9 +1729,9 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_36 = -\_1`], [Negation],
-  [`\_38 = checked(\_36 \* \_2)`], [Checked Multiply (may panic)],
-  [`→ assert(move \_38.1 == false) → bb29`], [Panic if move \_38.1 is true],
+  [`_36 = -_1`], [Negation],
+  [`_38 = checked(_36 * _2)`], [Checked Multiply (may panic)],
+  [`→ assert(move _38.1 == false) → bb29`], [Panic if move \_38.1 is true],
 )
 
 === bb29 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -1740,8 +1740,8 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_35 = move \_38.0`], [Move value],
-  [`→ switch(move \_35) \[4294966876→bb30; else→bb31\]`], [Branch on move \_35],
+  [`_35 = move _38.0`], [Move value],
+  [`→ switch(move _35) [4294966876→bb30; else→bb31]`], [Branch on move \_35],
 )
 
 === bb30
@@ -1750,8 +1750,8 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_42 = \_1 == -2147483648`], [Equal operation],
-  [`→ assert(move \_42 == false) → bb32`], [Panic if move \_42 is true],
+  [`_42 = _1 == -2147483648`], [Equal operation],
+  [`→ assert(move _42 == false) → bb32`], [Panic if move \_42 is true],
 )
 
 === bb31 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
@@ -1762,7 +1762,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_39 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _39 = panic([16 bytes])`], [Call panic],
 )
 
 === bb32
@@ -1771,9 +1771,9 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_41 = -\_1`], [Negation],
-  [`\_44 = \_2 == -2147483648`], [Equal operation],
-  [`→ assert(move \_44 == false) → bb33`], [Panic if move \_44 is true],
+  [`_41 = -_1`], [Negation],
+  [`_44 = _2 == -2147483648`], [Equal operation],
+  [`→ assert(move _44 == false) → bb33`], [Panic if move \_44 is true],
 )
 
 === bb33
@@ -1782,9 +1782,9 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_43 = -\_2`], [Negation],
-  [`\_45 = checked(\_41 \* \_43)`], [Checked Multiply (may panic)],
-  [`→ assert(move \_45.1 == false) → bb34`], [Panic if move \_45.1 is true],
+  [`_43 = -_2`], [Negation],
+  [`_45 = checked(_41 * _43)`], [Checked Multiply (may panic)],
+  [`→ assert(move _45.1 == false) → bb34`], [Panic if move \_45.1 is true],
 )
 
 === bb34 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -1793,8 +1793,8 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_40 = move \_45.0`], [Move value],
-  [`→ switch(move \_40) \[420→bb35; else→bb36\]`], [Branch on move \_40],
+  [`_40 = move _45.0`], [Move value],
+  [`→ switch(move _40) [420→bb35; else→bb36]`], [Branch on move \_40],
 )
 
 === bb35 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -1803,8 +1803,8 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_47 = 1 ^ 2`], [XOR operation],
-  [`→ switch(move \_47) \[3→bb37; else→bb38\]`], [Branch on move \_47],
+  [`_47 = 1 ^ 2`], [XOR operation],
+  [`→ switch(move _47) [3→bb37; else→bb38]`], [Branch on move \_47],
 )
 
 === bb36 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
@@ -1815,7 +1815,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_46 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _46 = panic([16 bytes])`], [Call panic],
 )
 
 === bb37 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -1824,8 +1824,8 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_49 = 1 ^ 3`], [XOR operation],
-  [`→ switch(move \_49) \[2→bb39; else→bb40\]`], [Branch on move \_49],
+  [`_49 = 1 ^ 3`], [XOR operation],
+  [`→ switch(move _49) [2→bb39; else→bb40]`], [Branch on move \_49],
 )
 
 === bb38 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
@@ -1836,7 +1836,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_48 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _48 = panic([16 bytes])`], [Call panic],
 )
 
 === bb39 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -1845,8 +1845,8 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_51 = 1 | 2`], [OR operation],
-  [`→ switch(move \_51) \[3→bb41; else→bb42\]`], [Branch on move \_51],
+  [`_51 = 1 | 2`], [OR operation],
+  [`→ switch(move _51) [3→bb41; else→bb42]`], [Branch on move \_51],
 )
 
 === bb40 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
@@ -1857,7 +1857,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_50 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _50 = panic([16 bytes])`], [Call panic],
 )
 
 === bb41 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -1866,8 +1866,8 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_53 = 1 | 3`], [OR operation],
-  [`→ switch(move \_53) \[3→bb43; else→bb44\]`], [Branch on move \_53],
+  [`_53 = 1 | 3`], [OR operation],
+  [`→ switch(move _53) [3→bb43; else→bb44]`], [Branch on move \_53],
 )
 
 === bb42 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
@@ -1878,7 +1878,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_52 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _52 = panic([16 bytes])`], [Call panic],
 )
 
 === bb43 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -1887,8 +1887,8 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_55 = 1 & 2`], [AND operation],
-  [`→ switch(move \_55) \[0→bb45; else→bb46\]`], [Branch on move \_55],
+  [`_55 = 1 & 2`], [AND operation],
+  [`→ switch(move _55) [0→bb45; else→bb46]`], [Branch on move \_55],
 )
 
 === bb44 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
@@ -1899,7 +1899,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_54 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _54 = panic([16 bytes])`], [Call panic],
 )
 
 === bb45 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -1908,8 +1908,8 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_57 = 1 & 3`], [AND operation],
-  [`→ switch(move \_57) \[1→bb47; else→bb48\]`], [Branch on move \_57],
+  [`_57 = 1 & 3`], [AND operation],
+  [`→ switch(move _57) [1→bb47; else→bb48]`], [Branch on move \_57],
 )
 
 === bb46 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
@@ -1920,7 +1920,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_56 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _56 = panic([16 bytes])`], [Call panic],
 )
 
 === bb47
@@ -1929,9 +1929,9 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_60 = 1 as RigidTy(Uint(U32))`], [Integer conversion],
-  [`\_61 = move \_60 \< 32`], [Less than operation],
-  [`→ assert(move \_61 == true) → bb49`], [Panic if move \_61 is false],
+  [`_60 = 1 as RigidTy(Uint(U32))`], [Integer conversion],
+  [`_61 = move _60 < 32`], [Less than operation],
+  [`→ assert(move _61 == true) → bb49`], [Panic if move \_61 is false],
 )
 
 === bb48 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
@@ -1942,7 +1942,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_58 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _58 = panic([16 bytes])`], [Call panic],
 )
 
 === bb49 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -1951,8 +1951,8 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_59 = 2 \<\< 1`], [Shift left operation],
-  [`→ switch(move \_59) \[4→bb50; else→bb51\]`], [Branch on move \_59],
+  [`_59 = 2 << 1`], [Shift left operation],
+  [`→ switch(move _59) [4→bb50; else→bb51]`], [Branch on move \_59],
 )
 
 === bb50
@@ -1961,9 +1961,9 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_64 = 1 as RigidTy(Uint(U32))`], [Integer conversion],
-  [`\_65 = move \_64 \< 32`], [Less than operation],
-  [`→ assert(move \_65 == true) → bb52`], [Panic if move \_65 is false],
+  [`_64 = 1 as RigidTy(Uint(U32))`], [Integer conversion],
+  [`_65 = move _64 < 32`], [Less than operation],
+  [`→ assert(move _65 == true) → bb52`], [Panic if move \_65 is false],
 )
 
 === bb51 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
@@ -1974,7 +1974,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_62 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _62 = panic([16 bytes])`], [Call panic],
 )
 
 === bb52 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -1983,8 +1983,8 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_63 = 2 \>\> 1`], [Shift right operation],
-  [`→ switch(move \_63) \[1→bb53; else→bb54\]`], [Branch on move \_63],
+  [`_63 = 2 >> 1`], [Shift right operation],
+  [`→ switch(move _63) [1→bb53; else→bb54]`], [Branch on move \_63],
 )
 
 === bb53
@@ -1993,9 +1993,9 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_68 = 1 as RigidTy(Uint(U32))`], [Integer conversion],
-  [`\_69 = move \_68 \< 32`], [Less than operation],
-  [`→ assert(move \_69 == true) → bb55`], [Panic if move \_69 is false],
+  [`_68 = 1 as RigidTy(Uint(U32))`], [Integer conversion],
+  [`_69 = move _68 < 32`], [Less than operation],
+  [`→ assert(move _69 == true) → bb55`], [Panic if move \_69 is false],
 )
 
 === bb54 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
@@ -2006,7 +2006,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_66 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _66 = panic([16 bytes])`], [Call panic],
 )
 
 === bb55 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -2015,8 +2015,8 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_67 = 3 \>\> 1`], [Shift right operation],
-  [`→ switch(move \_67) \[1→bb56; else→bb57\]`], [Branch on move \_67],
+  [`_67 = 3 >> 1`], [Shift right operation],
+  [`→ switch(move _67) [1→bb56; else→bb57]`], [Branch on move \_67],
 )
 
 === bb56
@@ -2025,9 +2025,9 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_72 = 1 as RigidTy(Uint(U32))`], [Integer conversion],
-  [`\_73 = move \_72 \< 32`], [Less than operation],
-  [`→ assert(move \_73 == true) → bb58`], [Panic if move \_73 is false],
+  [`_72 = 1 as RigidTy(Uint(U32))`], [Integer conversion],
+  [`_73 = move _72 < 32`], [Less than operation],
+  [`→ assert(move _73 == true) → bb58`], [Panic if move \_73 is false],
 )
 
 === bb57 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
@@ -2038,7 +2038,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_70 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _70 = panic([16 bytes])`], [Call panic],
 )
 
 === bb58 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -2047,8 +2047,8 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_71 = 1 \>\> 1`], [Shift right operation],
-  [`→ switch(move \_71) \[0→bb59; else→bb60\]`], [Branch on move \_71],
+  [`_71 = 1 >> 1`], [Shift right operation],
+  [`→ switch(move _71) [0→bb59; else→bb60]`], [Branch on move \_71],
 )
 
 === bb59
@@ -2057,8 +2057,8 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_77 = checked(\_1 + \_2)`], [Checked Add (may panic)],
-  [`→ assert(move \_77.1 == false) → bb61`], [Panic if move \_77.1 is true],
+  [`_77 = checked(_1 + _2)`], [Checked Add (may panic)],
+  [`→ assert(move _77.1 == false) → bb61`], [Panic if move \_77.1 is true],
 )
 
 === bb60 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
@@ -2069,7 +2069,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_74 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _74 = panic([16 bytes])`], [Call panic],
 )
 
 === bb61 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -2078,9 +2078,9 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_76 = move \_77.0`], [Move value],
-  [`\_75 = \_1 \< move \_76`], [Less than operation],
-  [`→ switch(move \_75) \[0→bb63; else→bb62\]`], [Branch on move \_75],
+  [`_76 = move _77.0`], [Move value],
+  [`_75 = _1 < move _76`], [Less than operation],
+  [`→ switch(move _75) [0→bb63; else→bb62]`], [Branch on move \_75],
 )
 
 === bb62
@@ -2089,8 +2089,8 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_81 = checked(\_1 + \_2)`], [Checked Add (may panic)],
-  [`→ assert(move \_81.1 == false) → bb64`], [Panic if move \_81.1 is true],
+  [`_81 = checked(_1 + _2)`], [Checked Add (may panic)],
+  [`→ assert(move _81.1 == false) → bb64`], [Panic if move \_81.1 is true],
 )
 
 === bb63 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
@@ -2101,7 +2101,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_78 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _78 = panic([16 bytes])`], [Call panic],
 )
 
 === bb64 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -2110,9 +2110,9 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_80 = move \_81.0`], [Move value],
-  [`\_79 = \_1 \<= move \_80`], [Less or equal operation],
-  [`→ switch(move \_79) \[0→bb66; else→bb65\]`], [Branch on move \_79],
+  [`_80 = move _81.0`], [Move value],
+  [`_79 = _1 <= move _80`], [Less or equal operation],
+  [`→ switch(move _79) [0→bb66; else→bb65]`], [Branch on move \_79],
 )
 
 === bb65
@@ -2121,8 +2121,8 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_86 = checked(\_1 + \_2)`], [Checked Add (may panic)],
-  [`→ assert(move \_86.1 == false) → bb67`], [Panic if move \_86.1 is true],
+  [`_86 = checked(_1 + _2)`], [Checked Add (may panic)],
+  [`→ assert(move _86.1 == false) → bb67`], [Panic if move \_86.1 is true],
 )
 
 === bb66 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
@@ -2133,7 +2133,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_82 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _82 = panic([16 bytes])`], [Call panic],
 )
 
 === bb67
@@ -2142,9 +2142,9 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_85 = move \_86.0`], [Move value],
-  [`\_87 = checked(\_85 - \_2)`], [Checked Subtract (may panic)],
-  [`→ assert(move \_87.1 == false) → bb68`], [Panic if move \_87.1 is true],
+  [`_85 = move _86.0`], [Move value],
+  [`_87 = checked(_85 - _2)`], [Checked Subtract (may panic)],
+  [`→ assert(move _87.1 == false) → bb68`], [Panic if move \_87.1 is true],
 )
 
 === bb68 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -2153,9 +2153,9 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_84 = move \_87.0`], [Move value],
-  [`\_83 = \_1 \<= move \_84`], [Less or equal operation],
-  [`→ switch(move \_83) \[0→bb70; else→bb69\]`], [Branch on move \_83],
+  [`_84 = move _87.0`], [Move value],
+  [`_83 = _1 <= move _84`], [Less or equal operation],
+  [`→ switch(move _83) [0→bb70; else→bb69]`], [Branch on move \_83],
 )
 
 === bb69
@@ -2164,8 +2164,8 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_91 = checked(\_1 + \_2)`], [Checked Add (may panic)],
-  [`→ assert(move \_91.1 == false) → bb71`], [Panic if move \_91.1 is true],
+  [`_91 = checked(_1 + _2)`], [Checked Add (may panic)],
+  [`→ assert(move _91.1 == false) → bb71`], [Panic if move \_91.1 is true],
 )
 
 === bb70 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
@@ -2176,7 +2176,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_88 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _88 = panic([16 bytes])`], [Call panic],
 )
 
 === bb71 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -2185,9 +2185,9 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_90 = move \_91.0`], [Move value],
-  [`\_89 = move \_90 \> \_1`], [Greater than operation],
-  [`→ switch(move \_89) \[0→bb73; else→bb72\]`], [Branch on move \_89],
+  [`_90 = move _91.0`], [Move value],
+  [`_89 = move _90 > _1`], [Greater than operation],
+  [`→ switch(move _89) [0→bb73; else→bb72]`], [Branch on move \_89],
 )
 
 === bb72
@@ -2196,8 +2196,8 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_95 = checked(\_1 + \_2)`], [Checked Add (may panic)],
-  [`→ assert(move \_95.1 == false) → bb74`], [Panic if move \_95.1 is true],
+  [`_95 = checked(_1 + _2)`], [Checked Add (may panic)],
+  [`→ assert(move _95.1 == false) → bb74`], [Panic if move \_95.1 is true],
 )
 
 === bb73 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
@@ -2208,7 +2208,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_92 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _92 = panic([16 bytes])`], [Call panic],
 )
 
 === bb74 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -2217,9 +2217,9 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_94 = move \_95.0`], [Move value],
-  [`\_93 = move \_94 \>= \_1`], [Greater or equal operation],
-  [`→ switch(move \_93) \[0→bb76; else→bb75\]`], [Branch on move \_93],
+  [`_94 = move _95.0`], [Move value],
+  [`_93 = move _94 >= _1`], [Greater or equal operation],
+  [`→ switch(move _93) [0→bb76; else→bb75]`], [Branch on move \_93],
 )
 
 === bb75
@@ -2228,8 +2228,8 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_100 = checked(\_1 + \_2)`], [Checked Add (may panic)],
-  [`→ assert(move \_100.1 == false) → bb77`], [Panic if move \_100.1 is true],
+  [`_100 = checked(_1 + _2)`], [Checked Add (may panic)],
+  [`→ assert(move _100.1 == false) → bb77`], [Panic if move \_100.1 is true],
 )
 
 === bb76 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
@@ -2240,7 +2240,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_96 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _96 = panic([16 bytes])`], [Call panic],
 )
 
 === bb77
@@ -2249,9 +2249,9 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_99 = move \_100.0`], [Move value],
-  [`\_101 = checked(\_99 - \_2)`], [Checked Subtract (may panic)],
-  [`→ assert(move \_101.1 == false) → bb78`], [Panic if move \_101.1 is true],
+  [`_99 = move _100.0`], [Move value],
+  [`_101 = checked(_99 - _2)`], [Checked Subtract (may panic)],
+  [`→ assert(move _101.1 == false) → bb78`], [Panic if move \_101.1 is true],
 )
 
 === bb78 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -2260,9 +2260,9 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_98 = move \_101.0`], [Move value],
-  [`\_97 = move \_98 \>= \_1`], [Greater or equal operation],
-  [`→ switch(move \_97) \[0→bb80; else→bb79\]`], [Branch on move \_97],
+  [`_98 = move _101.0`], [Move value],
+  [`_97 = move _98 >= _1`], [Greater or equal operation],
+  [`→ switch(move _97) [0→bb80; else→bb79]`], [Branch on move \_97],
 )
 
 === bb79 #text(fill: rgb("#888888"), weight: "regular")[ — return / success]
@@ -2284,7 +2284,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_102 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _102 = panic([16 bytes])`], [Call panic],
 )
 
 == Key Observations
@@ -2373,9 +2373,9 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_2 = 42`], [Load constant],
-  [`\_3 = 10`], [Load constant],
-  [`→ \_1 = test\_binop(move \_2, move \_3) → bb1`], [Call test\_binop],
+  [`_2 = 42`], [Load constant],
+  [`_3 = 10`], [Load constant],
+  [`→ _1 = test_binop(move _2, move _3) → bb1`], [Call test\_binop],
 )
 
 === bb1 #text(fill: rgb("#888888"), weight: "regular")[ — return / success]

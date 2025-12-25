@@ -125,10 +125,10 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_1 = St(1, 2)`], [Construct aggregate],
-  [`\_4 = \_1.0`], [Copy value],
-  [`\_5 = checked(\_4 + 1)`], [Checked Add (may panic)],
-  [`→ assert(move \_5.1 == false) → bb1`], [Panic if move \_5.1 is true],
+  [`_1 = St(1, 2)`], [Construct aggregate],
+  [`_4 = _1.0`], [Copy value],
+  [`_5 = checked(_4 + 1)`], [Checked Add (may panic)],
+  [`→ assert(move _5.1 == false) → bb1`], [Panic if move \_5.1 is true],
 )
 
 === bb1 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -137,10 +137,10 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_3 = move \_5.0`], [Move value],
-  [`\_6 = \_1.1`], [Copy value],
-  [`\_2 = move \_3 == move \_6`], [Equal operation],
-  [`→ switch(move \_2) \[0→bb3; else→bb2\]`], [Branch on move \_2],
+  [`_3 = move _5.0`], [Move value],
+  [`_6 = _1.1`], [Copy value],
+  [`_2 = move _3 == move _6`], [Equal operation],
+  [`→ switch(move _2) [0→bb3; else→bb2]`], [Branch on move \_2],
 )
 
 === bb2 #text(fill: rgb("#888888"), weight: "regular")[ — return / success]
@@ -162,7 +162,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_7 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _7 = panic([16 bytes])`], [Call panic],
 )
 
 == Key Observations

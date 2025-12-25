@@ -119,8 +119,8 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_3 = 10`], [Load constant],
-  [`→ \_2 = sum\_to\_n(move \_3) → bb1`], [Call sum\_to\_n],
+  [`_3 = 10`], [Load constant],
+  [`→ _2 = sum_to_n(move _3) → bb1`], [Call sum\_to\_n],
 )
 
 === bb1 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -129,9 +129,9 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_4 = 55`], [Load constant],
-  [`\_1 = move \_2 == move \_4`], [Equal operation],
-  [`→ switch(\_1) \[0→bb2; else→bb3\]`], [Branch on \_1],
+  [`_4 = 55`], [Load constant],
+  [`_1 = move _2 == move _4`], [Equal operation],
+  [`→ switch(_1) [0→bb2; else→bb3]`], [Branch on \_1],
 )
 
 === bb2 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
@@ -142,7 +142,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_5 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _5 = panic([16 bytes])`], [Call panic],
 )
 
 === bb3 #text(fill: rgb("#888888"), weight: "regular")[ — return / success]
@@ -241,7 +241,7 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_1 = test\_sum\_to\_n() → bb1`], [Call test\_sum\_to\_n],
+  [`→ _1 = test_sum_to_n() → bb1`], [Call test\_sum\_to\_n],
 )
 
 === bb1 #text(fill: rgb("#888888"), weight: "regular")[ — return / success]
@@ -424,8 +424,8 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_2 = 0`], [Load constant],
-  [`\_3 = \_1`], [Copy value],
+  [`_2 = 0`], [Load constant],
+  [`_3 = _1`], [Copy value],
   [`→ goto bb1`], [Jump to bb1],
 )
 
@@ -435,9 +435,9 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_5 = \_3`], [Copy value],
-  [`\_4 = move \_5 \> 0`], [Greater than operation],
-  [`→ switch(move \_4) \[0→bb5; else→bb2\]`], [Branch on move \_4],
+  [`_5 = _3`], [Copy value],
+  [`_4 = move _5 > 0`], [Greater than operation],
+  [`→ switch(move _4) [0→bb5; else→bb2]`], [Branch on move \_4],
 )
 
 === bb2 #text(fill: rgb("#888888"), weight: "regular")[ — loop]
@@ -446,9 +446,9 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_6 = \_3`], [Copy value],
-  [`\_7 = checked(\_2 + \_6)`], [Checked Add (may panic)],
-  [`→ assert(move \_7.1 == false) → bb3`], [Panic if move \_7.1 is true],
+  [`_6 = _3`], [Copy value],
+  [`_7 = checked(_2 + _6)`], [Checked Add (may panic)],
+  [`→ assert(move _7.1 == false) → bb3`], [Panic if move \_7.1 is true],
 )
 
 === bb3 #text(fill: rgb("#888888"), weight: "regular")[ — loop]
@@ -457,10 +457,10 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_2 = move \_7.0`], [Move value],
-  [`\_8 = \_3`], [Copy value],
-  [`\_9 = checked(\_8 - 1)`], [Checked Subtract (may panic)],
-  [`→ assert(move \_9.1 == false) → bb4`], [Panic if move \_9.1 is true],
+  [`_2 = move _7.0`], [Move value],
+  [`_8 = _3`], [Copy value],
+  [`_9 = checked(_8 - 1)`], [Checked Subtract (may panic)],
+  [`→ assert(move _9.1 == false) → bb4`], [Panic if move \_9.1 is true],
 )
 
 === bb4 #text(fill: rgb("#888888"), weight: "regular")[ — loop]
@@ -469,7 +469,7 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_3 = move \_9.0`], [Move value],
+  [`_3 = move _9.0`], [Move value],
   [`→ goto bb1`], [Jump to bb1],
 )
 
@@ -481,7 +481,7 @@ _Normal return path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_0 = \_2`], [Copy value],
+  [`_0 = _2`], [Copy value],
   [`→ return`], [Return from function],
 )
 

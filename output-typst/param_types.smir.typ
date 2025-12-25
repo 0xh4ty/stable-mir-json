@@ -54,14 +54,14 @@ fn main() {
   align: (center, left, left),
   [*Local*], [*Type*], [*Notes*],
   [`0`], [`()`], [Return place],
-  [`1`], [`WithParam\<u32\>`], [],
-  [`2`], [`WithParam\<u64\>`], [],
-  [`3`], [`std::result::Result\<u8, usize\>`], [],
+  [`1`], [`WithParam<u32>`], [],
+  [`2`], [`WithParam<u64>`], [],
+  [`3`], [`std::result::Result<u8, usize>`], [],
   [`4`], [`usize`], [],
-  [`5`], [`std::result::Result\<u64, u8\>`], [],
+  [`5`], [`std::result::Result<u64, u8>`], [],
   [`6`], [`u64`], [],
   [`7`], [`usize`], [],
-  [`8`], [`std::option::Option\<usize\>`], [],
+  [`8`], [`std::option::Option<usize>`], [],
   [`9`], [`bool`], [],
   [`10`], [`u64`], [],
   [`11`], [`u64`], [],
@@ -165,13 +165,13 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_1 = WithParam(42, 42)`], [Construct aggregate],
-  [`\_2 = WithParam(42, 42)`], [Construct aggregate],
-  [`\_4 = \_1.1`], [Copy value],
-  [`\_3 = Result::Err(move \_4)`], [Construct aggregate],
-  [`\_6 = \_2.0`], [Copy value],
-  [`\_5 = Result::Ok(move \_6)`], [Construct aggregate],
-  [`→ \_8 = err(\_3) → bb1`], [Call err],
+  [`_1 = WithParam(42, 42)`], [Construct aggregate],
+  [`_2 = WithParam(42, 42)`], [Construct aggregate],
+  [`_4 = _1.1`], [Copy value],
+  [`_3 = Result::Err(move _4)`], [Construct aggregate],
+  [`_6 = _2.0`], [Copy value],
+  [`_5 = Result::Ok(move _6)`], [Construct aggregate],
+  [`→ _8 = err(_3) → bb1`], [Call err],
 )
 
 === bb1
@@ -180,7 +180,7 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_7 = unwrap(move \_8) → bb2`], [Call unwrap],
+  [`→ _7 = unwrap(move _8) → bb2`], [Call unwrap],
 )
 
 === bb2
@@ -189,8 +189,8 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_10 = \_7 as RigidTy(Uint(U64))`], [Integer conversion],
-  [`→ \_11 = unwrap(\_5) → bb3`], [Call unwrap],
+  [`_10 = _7 as RigidTy(Uint(U64))`], [Integer conversion],
+  [`→ _11 = unwrap(_5) → bb3`], [Call unwrap],
 )
 
 === bb3 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -199,8 +199,8 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_9 = move \_10 == move \_11`], [Equal operation],
-  [`→ switch(move \_9) \[0→bb5; else→bb4\]`], [Branch on move \_9],
+  [`_9 = move _10 == move _11`], [Equal operation],
+  [`→ switch(move _9) [0→bb5; else→bb4]`], [Branch on move \_9],
 )
 
 === bb4 #text(fill: rgb("#888888"), weight: "regular")[ — return / success]
@@ -222,7 +222,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_12 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _12 = panic([16 bytes])`], [Call panic],
 )
 
 == Key Observations

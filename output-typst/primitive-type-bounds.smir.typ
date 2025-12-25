@@ -121,8 +121,8 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_2 = checked(-2 + 1)`], [Checked Add (may panic)],
-  [`→ assert(move \_2.1 == false) → bb1`], [Panic if move \_2.1 is true],
+  [`_2 = checked(-2 + 1)`], [Checked Add (may panic)],
+  [`→ assert(move _2.1 == false) → bb1`], [Panic if move \_2.1 is true],
 )
 
 === bb1 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -131,10 +131,10 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_1 = move \_2.0`], [Move value],
-  [`\_4 = -1`], [Load constant],
-  [`\_3 = move \_4 == \_1`], [Equal operation],
-  [`→ switch(move \_3) \[0→bb3; else→bb2\]`], [Branch on move \_3],
+  [`_1 = move _2.0`], [Move value],
+  [`_4 = -1`], [Load constant],
+  [`_3 = move _4 == _1`], [Equal operation],
+  [`→ switch(move _3) [0→bb3; else→bb2]`], [Branch on move \_3],
 )
 
 === bb2 #text(fill: rgb("#888888"), weight: "regular")[ — return / success]
@@ -156,7 +156,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_5 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _5 = panic([16 bytes])`], [Call panic],
 )
 
 == Key Observations

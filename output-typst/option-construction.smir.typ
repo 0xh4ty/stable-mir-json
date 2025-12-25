@@ -44,8 +44,8 @@ fn main() {
   align: (center, left, left),
   [*Local*], [*Type*], [*Notes*],
   [`0`], [`()`], [Return place],
-  [`1`], [`std::option::Option\<u32\>`], [],
-  [`2`], [`std::option::Option\<u32\>`], [],
+  [`1`], [`std::option::Option<u32>`], [],
+  [`2`], [`std::option::Option<u32>`], [],
   [`3`], [`u32`], [],
 )
 
@@ -86,9 +86,9 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_1 = Option::Some(42)`], [Construct aggregate],
-  [`\_2 = Option::None()`], [Construct aggregate],
-  [`→ \_3 = unwrap(\_1) → bb1`], [Call unwrap],
+  [`_1 = Option::Some(42)`], [Construct aggregate],
+  [`_2 = Option::None()`], [Construct aggregate],
+  [`→ _3 = unwrap(_1) → bb1`], [Call unwrap],
 )
 
 === bb1 #text(fill: rgb("#888888"), weight: "regular")[ — return / success]

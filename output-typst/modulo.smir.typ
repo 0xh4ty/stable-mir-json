@@ -136,8 +136,8 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_2 = 10 == 0`], [Equal operation],
-  [`→ assert(move \_2 == false) → bb1`], [Panic if move \_2 is true],
+  [`_2 = 10 == 0`], [Equal operation],
+  [`→ assert(move _2 == false) → bb1`], [Panic if move \_2 is true],
 )
 
 === bb1
@@ -146,10 +146,10 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_3 = 10 == -1`], [Equal operation],
-  [`\_4 = 42 == -2147483648`], [Equal operation],
-  [`\_5 = move \_3 & move \_4`], [AND operation],
-  [`→ assert(move \_5 == false) → bb2`], [Panic if move \_5 is true],
+  [`_3 = 10 == -1`], [Equal operation],
+  [`_4 = 42 == -2147483648`], [Equal operation],
+  [`_5 = move _3 & move _4`], [AND operation],
+  [`→ assert(move _5 == false) → bb2`], [Panic if move \_5 is true],
 )
 
 === bb2 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -158,8 +158,8 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_1 = 42 % 10`], [Remainder operation],
-  [`→ switch(move \_1) \[2→bb3; else→bb4\]`], [Branch on move \_1],
+  [`_1 = 42 % 10`], [Remainder operation],
+  [`→ switch(move _1) [2→bb3; else→bb4]`], [Branch on move \_1],
 )
 
 === bb3 #text(fill: rgb("#888888"), weight: "regular")[ — return / success]
@@ -181,7 +181,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_6 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _6 = panic([16 bytes])`], [Call panic],
 )
 
 == Key Observations

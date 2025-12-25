@@ -101,8 +101,8 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_1 = 97`], [Load constant],
-  [`→ switch(move \_1) \[97→bb1; else→bb2\]`], [Branch on move \_1],
+  [`_1 = 97`], [Load constant],
+  [`→ switch(move _1) [97→bb1; else→bb2]`], [Branch on move \_1],
 )
 
 === bb1 #text(fill: rgb("#888888"), weight: "regular")[ — return / success]
@@ -124,7 +124,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_2 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _2 = panic([16 bytes])`], [Call panic],
 )
 
 == Key Observations

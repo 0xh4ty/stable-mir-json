@@ -81,9 +81,9 @@ fn main () {
   [`6`], [`&mut &mut i8`], [],
   [`7`], [`i8`], [],
   [`8`], [`!`], [],
-  [`9`], [`Enclosing\<'\_\>`], [],
+  [`9`], [`Enclosing<'_>`], [],
   [`10`], [`&mut MyStruct`], [],
-  [`11`], [`&mut Enclosing\<'\_\>`], [],
+  [`11`], [`&mut Enclosing<'_>`], [],
   [`12`], [`i8`], [],
   [`13`], [`!`], [],
   [`14`], [`&mut usize`], [],
@@ -271,11 +271,11 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_1 = MyStruct(32, 0, 32)`], [Construct aggregate],
-  [`\_2 = &mut \_1.0`], [Mutable borrow],
-  [`(\*\_2) = 42`], [Load constant],
-  [`\_3 = \_1.0`], [Copy value],
-  [`→ switch(move \_3) \[42→bb1; else→bb2\]`], [Branch on move \_3],
+  [`_1 = MyStruct(32, 0, 32)`], [Construct aggregate],
+  [`_2 = &mut _1.0`], [Mutable borrow],
+  [`(*_2) = 42`], [Load constant],
+  [`_3 = _1.0`], [Copy value],
+  [`→ switch(move _3) [42→bb1; else→bb2]`], [Branch on move \_3],
 )
 
 === bb1 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -284,12 +284,12 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_5 = &mut \_1.0`], [Mutable borrow],
-  [`\_6 = &mut \_5`], [Mutable borrow],
-  [`\_20 = copy\_deref((\*\_6))`], [],
-  [`(\*\_20) = 43`], [Load constant],
-  [`\_7 = \_1.0`], [Copy value],
-  [`→ switch(move \_7) \[43→bb3; else→bb4\]`], [Branch on move \_7],
+  [`_5 = &mut _1.0`], [Mutable borrow],
+  [`_6 = &mut _5`], [Mutable borrow],
+  [`_20 = copy_deref((*_6))`], [],
+  [`(*_20) = 43`], [Load constant],
+  [`_7 = _1.0`], [Copy value],
+  [`→ switch(move _7) [43→bb3; else→bb4]`], [Branch on move \_7],
 )
 
 === bb2 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
@@ -300,7 +300,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_4 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _4 = panic([16 bytes])`], [Call panic],
 )
 
 === bb3 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -309,12 +309,12 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_10 = &mut \_1`], [Mutable borrow],
-  [`\_9 = Enclosing(\_10)`], [Construct aggregate],
-  [`\_11 = &mut \_9`], [Mutable borrow],
-  [`\_21 = copy\_deref((\*\_11).0)`], [],
-  [`\_12 = (\*\_21).0`], [Copy value],
-  [`→ switch(\_12) \[43→bb5; else→bb6\]`], [Branch on \_12],
+  [`_10 = &mut _1`], [Mutable borrow],
+  [`_9 = Enclosing(_10)`], [Construct aggregate],
+  [`_11 = &mut _9`], [Mutable borrow],
+  [`_21 = copy_deref((*_11).0)`], [],
+  [`_12 = (*_21).0`], [Copy value],
+  [`→ switch(_12) [43→bb5; else→bb6]`], [Branch on \_12],
 )
 
 === bb4 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
@@ -325,7 +325,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_8 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _8 = panic([16 bytes])`], [Call panic],
 )
 
 === bb5 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -334,15 +334,15 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_22 = copy\_deref((\*\_11).0)`], [],
-  [`(\*\_22).1 = 1`], [Load constant],
-  [`\_23 = copy\_deref((\*\_11).0)`], [],
-  [`\_14 = &mut (\*\_23).2`], [Mutable borrow],
-  [`\_24 = copy\_deref((\*\_11).0)`], [],
-  [`\_15 = (\*\_24).0`], [Copy value],
-  [`(\*\_14) = move \_15 as RigidTy(Uint(Usize))`], [Integer conversion],
-  [`\_16 = \_1.1`], [Copy value],
-  [`→ switch(move \_16) \[0→bb8; else→bb7\]`], [Branch on move \_16],
+  [`_22 = copy_deref((*_11).0)`], [],
+  [`(*_22).1 = 1`], [Load constant],
+  [`_23 = copy_deref((*_11).0)`], [],
+  [`_14 = &mut (*_23).2`], [Mutable borrow],
+  [`_24 = copy_deref((*_11).0)`], [],
+  [`_15 = (*_24).0`], [Copy value],
+  [`(*_14) = move _15 as RigidTy(Uint(Usize))`], [Integer conversion],
+  [`_16 = _1.1`], [Copy value],
+  [`→ switch(move _16) [0→bb8; else→bb7]`], [Branch on move \_16],
 )
 
 === bb6 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
@@ -353,7 +353,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_13 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _13 = panic([16 bytes])`], [Call panic],
 )
 
 === bb7 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -362,8 +362,8 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_18 = \_1.2`], [Copy value],
-  [`→ switch(move \_18) \[43→bb9; else→bb10\]`], [Branch on move \_18],
+  [`_18 = _1.2`], [Copy value],
+  [`→ switch(move _18) [43→bb9; else→bb10]`], [Branch on move \_18],
 )
 
 === bb8 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
@@ -374,7 +374,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_17 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _17 = panic([16 bytes])`], [Call panic],
 )
 
 === bb9 #text(fill: rgb("#888888"), weight: "regular")[ — return / success]
@@ -396,7 +396,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_19 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _19 = panic([16 bytes])`], [Call panic],
 )
 
 == Key Observations

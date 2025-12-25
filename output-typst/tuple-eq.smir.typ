@@ -122,10 +122,10 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_1 = Tuple(42, 99)`], [Construct aggregate],
-  [`\_3 = &\_1`], [Shared borrow],
-  [`\_4 = 0`], [Load constant],
-  [`→ \_2 = eq(move \_3, move \_4) → bb1`], [Call eq],
+  [`_1 = Tuple(42, 99)`], [Construct aggregate],
+  [`_3 = &_1`], [Shared borrow],
+  [`_4 = 0`], [Load constant],
+  [`→ _2 = eq(move _3, move _4) → bb1`], [Call eq],
 )
 
 === bb1 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -134,7 +134,7 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ switch(move \_2) \[0→bb3; else→bb2\]`], [Branch on move \_2],
+  [`→ switch(move _2) [0→bb3; else→bb2]`], [Branch on move \_2],
 )
 
 === bb2 #text(fill: rgb("#888888"), weight: "regular")[ — return / success]
@@ -156,7 +156,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_5 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _5 = panic([16 bytes])`], [Call panic],
 )
 
 == Key Observations

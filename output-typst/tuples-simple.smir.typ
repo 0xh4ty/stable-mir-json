@@ -106,11 +106,11 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_1 = Tuple(42, 99)`], [Construct aggregate],
-  [`\_3 = \_1.0`], [Copy value],
-  [`\_4 = \_1.1`], [Copy value],
-  [`\_2 = move \_3 != move \_4`], [Not equal operation],
-  [`→ switch(move \_2) \[0→bb2; else→bb1\]`], [Branch on move \_2],
+  [`_1 = Tuple(42, 99)`], [Construct aggregate],
+  [`_3 = _1.0`], [Copy value],
+  [`_4 = _1.1`], [Copy value],
+  [`_2 = move _3 != move _4`], [Not equal operation],
+  [`→ switch(move _2) [0→bb2; else→bb1]`], [Branch on move \_2],
 )
 
 === bb1 #text(fill: rgb("#888888"), weight: "regular")[ — return / success]
@@ -132,7 +132,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_5 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _5 = panic([16 bytes])`], [Call panic],
 )
 
 == Key Observations

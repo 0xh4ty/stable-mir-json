@@ -146,7 +146,7 @@ fn generate_function_typst(ctx: &FunctionContext) -> String {
         typ.push_str(&format!(
             "  [`{}`], [`{}`], [{}],\n",
             index,
-            escape_typst(&format!("{}", decl.ty)),
+            escape_typst_code(&format!("{}", decl.ty)),
             note
         ));
     }
@@ -226,7 +226,7 @@ fn render_block_typst(
         };
         typ.push_str(&format!(
             "  [`{}`], [{}],\n",
-            escape_typst(&mir),
+            escape_typst_code(&mir),
             escape_typst(&row.annotation)
         ));
     }
@@ -236,7 +236,13 @@ fn render_block_typst(
     typ
 }
 
-/// Escape special Typst characters
+/// Escape for content inside backticks (raw/code mode)
+/// Only backticks need escaping in raw mode
+fn escape_typst_code(s: &str) -> String {
+    s.replace('`', "'")
+}
+
+/// Escape special Typst characters for plain text
 fn escape_typst(s: &str) -> String {
     s.replace('\\', "\\\\")
         .replace('#', "\\#")

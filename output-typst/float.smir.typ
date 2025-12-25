@@ -144,11 +144,11 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_3 = 1080033280`], [Load constant],
-  [`\_4 = 1067030938`], [Load constant],
-  [`\_2 = move \_3 + move \_4`], [Add operation],
-  [`\_1 = move \_2 == 1083598438`], [Equal operation],
-  [`→ switch(move \_1) \[0→bb2; else→bb1\]`], [Branch on move \_1],
+  [`_3 = 1080033280`], [Load constant],
+  [`_4 = 1067030938`], [Load constant],
+  [`_2 = move _3 + move _4`], [Add operation],
+  [`_1 = move _2 == 1083598438`], [Equal operation],
+  [`→ switch(move _1) [0→bb2; else→bb1]`], [Branch on move \_1],
 )
 
 === bb1 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -157,11 +157,11 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_8 = 4615063718147915776`], [Load constant],
-  [`\_9 = 4608083138725491507`], [Load constant],
-  [`\_7 = move \_8 + move \_9`], [Add operation],
-  [`\_6 = move \_7 == 4616977747989548237`], [Equal operation],
-  [`→ switch(move \_6) \[0→bb4; else→bb3\]`], [Branch on move \_6],
+  [`_8 = 4615063718147915776`], [Load constant],
+  [`_9 = 4608083138725491507`], [Load constant],
+  [`_7 = move _8 + move _9`], [Add operation],
+  [`_6 = move _7 == 4616977747989548237`], [Equal operation],
+  [`→ switch(move _6) [0→bb4; else→bb3]`], [Branch on move \_6],
 )
 
 === bb2 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
@@ -172,7 +172,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_5 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _5 = panic([16 bytes])`], [Call panic],
 )
 
 === bb3 #text(fill: rgb("#888888"), weight: "regular")[ — return / success]
@@ -194,7 +194,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_10 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _10 = panic([16 bytes])`], [Call panic],
 )
 
 == Key Observations

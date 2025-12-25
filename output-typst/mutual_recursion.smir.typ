@@ -118,7 +118,7 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_1 = is\_even(10) → bb1`], [Call is\_even],
+  [`→ _1 = is_even(10) → bb1`], [Call is\_even],
 )
 
 === bb1 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -127,7 +127,7 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ switch(\_1) \[0→bb3; else→bb2\]`], [Branch on \_1],
+  [`→ switch(_1) [0→bb3; else→bb2]`], [Branch on \_1],
 )
 
 === bb2 #text(fill: rgb("#888888"), weight: "regular")[ — return / success]
@@ -149,7 +149,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_2 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _2 = panic([16 bytes])`], [Call panic],
 )
 
 == Key Observations
@@ -300,7 +300,7 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ switch(\_1) \[0→bb1; else→bb2\]`], [Branch on \_1],
+  [`→ switch(_1) [0→bb1; else→bb2]`], [Branch on \_1],
 )
 
 === bb1
@@ -309,7 +309,7 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_0 = 0`], [Load constant],
+  [`_0 = 0`], [Load constant],
   [`→ goto bb4`], [Jump to bb4],
 )
 
@@ -319,8 +319,8 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_3 = checked(\_1 - 1)`], [Checked Subtract (may panic)],
-  [`→ assert(move \_3.1 == false) → bb3`], [Panic if move \_3.1 is true],
+  [`_3 = checked(_1 - 1)`], [Checked Subtract (may panic)],
+  [`→ assert(move _3.1 == false) → bb3`], [Panic if move \_3.1 is true],
 )
 
 === bb3
@@ -329,8 +329,8 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_2 = move \_3.0`], [Move value],
-  [`→ \_0 = is\_even(move \_2) → bb4`], [Call is\_even],
+  [`_2 = move _3.0`], [Move value],
+  [`→ _0 = is_even(move _2) → bb4`], [Call is\_even],
 )
 
 === bb4 #text(fill: rgb("#888888"), weight: "regular")[ — return / success]
@@ -492,7 +492,7 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ switch(\_1) \[0→bb1; else→bb2\]`], [Branch on \_1],
+  [`→ switch(_1) [0→bb1; else→bb2]`], [Branch on \_1],
 )
 
 === bb1
@@ -501,7 +501,7 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_0 = 1`], [Load constant],
+  [`_0 = 1`], [Load constant],
   [`→ goto bb4`], [Jump to bb4],
 )
 
@@ -511,8 +511,8 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_3 = checked(\_1 - 1)`], [Checked Subtract (may panic)],
-  [`→ assert(move \_3.1 == false) → bb3`], [Panic if move \_3.1 is true],
+  [`_3 = checked(_1 - 1)`], [Checked Subtract (may panic)],
+  [`→ assert(move _3.1 == false) → bb3`], [Panic if move \_3.1 is true],
 )
 
 === bb3
@@ -521,8 +521,8 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_2 = move \_3.0`], [Move value],
-  [`→ \_0 = is\_odd(move \_2) → bb4`], [Call is\_odd],
+  [`_2 = move _3.0`], [Move value],
+  [`→ _0 = is_odd(move _2) → bb4`], [Call is\_odd],
 )
 
 === bb4 #text(fill: rgb("#888888"), weight: "regular")[ — return / success]

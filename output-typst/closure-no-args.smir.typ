@@ -46,9 +46,9 @@
   align: (center, left, left),
   [*Local*], [*Type*], [*Notes*],
   [`0`], [`()`], [Return place],
-  [`1`], [`{closure\@tests/integration/programs/closure-no-args.rs:2:15: 2:24}`], [],
+  [`1`], [`{closure@tests/integration/programs/closure-no-args.rs:2:15: 2:24}`], [],
   [`2`], [`u32`], [],
-  [`3`], [`&{closure\@tests/integration/programs/closure-no-args.rs:2:15: 2:24}`], [],
+  [`3`], [`&{closure@tests/integration/programs/closure-no-args.rs:2:15: 2:24}`], [],
   [`4`], [`!`], [],
 )
 
@@ -119,8 +119,8 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_3 = &\_1`], [Shared borrow],
-  [`→ \_2 = call(move \_3, ()) → bb1`], [Call call],
+  [`_3 = &_1`], [Shared borrow],
+  [`→ _2 = call(move _3, ()) → bb1`], [Call call],
 )
 
 === bb1 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -129,7 +129,7 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ switch(move \_2) \[42→bb2; else→bb3\]`], [Branch on move \_2],
+  [`→ switch(move _2) [42→bb2; else→bb3]`], [Branch on move \_2],
 )
 
 === bb2 #text(fill: rgb("#888888"), weight: "regular")[ — return / success]
@@ -151,7 +151,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_4 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _4 = panic([16 bytes])`], [Call panic],
 )
 
 == Key Observations
@@ -197,7 +197,7 @@ fn main() {
   align: (center, left, left),
   [*Local*], [*Type*], [*Notes*],
   [`0`], [`u32`], [Return place],
-  [`1`], [`&{closure\@tests/integration/programs/closure-no-args.rs:2:15: 2:24}`], [],
+  [`1`], [`&{closure@tests/integration/programs/closure-no-args.rs:2:15: 2:24}`], [],
 )
 
 == Control-Flow Overview
@@ -222,7 +222,7 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_0 = 42`], [Load constant],
+  [`_0 = 42`], [Load constant],
   [`→ return`], [Return from function],
 )
 

@@ -119,9 +119,9 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_2 = 42`], [Load constant],
-  [`\_3 = 0`], [Load constant],
-  [`→ \_1 = test(move \_2, move \_3) → bb1`], [Call test],
+  [`_2 = 42`], [Load constant],
+  [`_3 = 0`], [Load constant],
+  [`→ _1 = test(move _2, move _3) → bb1`], [Call test],
 )
 
 === bb1 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -130,7 +130,7 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ switch(\_1) \[0→bb2; else→bb3\]`], [Branch on \_1],
+  [`→ switch(_1) [0→bb2; else→bb3]`], [Branch on \_1],
 )
 
 === bb2 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
@@ -141,7 +141,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_4 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _4 = panic([16 bytes])`], [Call panic],
 )
 
 === bb3 #text(fill: rgb("#888888"), weight: "regular")[ — return / success]
@@ -225,7 +225,7 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_0 = \_1 \> \_2`], [Greater than operation],
+  [`_0 = _1 > _2`], [Greater than operation],
   [`→ return`], [Return from function],
 )
 

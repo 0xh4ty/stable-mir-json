@@ -118,7 +118,7 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_1 = fibonacci(5) → bb1`], [Call fibonacci],
+  [`→ _1 = fibonacci(5) → bb1`], [Call fibonacci],
 )
 
 === bb1 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
@@ -127,7 +127,7 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ switch(\_1) \[5→bb2; else→bb3\]`], [Branch on \_1],
+  [`→ switch(_1) [5→bb2; else→bb3]`], [Branch on \_1],
 )
 
 === bb2 #text(fill: rgb("#888888"), weight: "regular")[ — return / success]
@@ -149,7 +149,7 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ \_2 = panic(\[16 bytes\])`], [Call panic],
+  [`→ _2 = panic([16 bytes])`], [Call panic],
 )
 
 == Key Observations
@@ -389,7 +389,7 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ switch(\_1) \[0→bb3, 1→bb2; else→bb1\]`], [Branch on \_1],
+  [`→ switch(_1) [0→bb3, 1→bb2; else→bb1]`], [Branch on \_1],
 )
 
 === bb1
@@ -398,8 +398,8 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_4 = checked(\_1 - 2)`], [Checked Subtract (may panic)],
-  [`→ assert(move \_4.1 == false) → bb4`], [Panic if move \_4.1 is true],
+  [`_4 = checked(_1 - 2)`], [Checked Subtract (may panic)],
+  [`→ assert(move _4.1 == false) → bb4`], [Panic if move \_4.1 is true],
 )
 
 === bb2
@@ -408,7 +408,7 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_0 = 1`], [Load constant],
+  [`_0 = 1`], [Load constant],
   [`→ goto bb9`], [Jump to bb9],
 )
 
@@ -418,7 +418,7 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_0 = 0`], [Load constant],
+  [`_0 = 0`], [Load constant],
   [`→ goto bb9`], [Jump to bb9],
 )
 
@@ -428,8 +428,8 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_3 = move \_4.0`], [Move value],
-  [`→ \_2 = fibonacci(move \_3) → bb5`], [Recursive call to fibonacci],
+  [`_3 = move _4.0`], [Move value],
+  [`→ _2 = fibonacci(move _3) → bb5`], [Recursive call to fibonacci],
 )
 
 === bb5
@@ -438,8 +438,8 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_7 = checked(\_1 - 1)`], [Checked Subtract (may panic)],
-  [`→ assert(move \_7.1 == false) → bb6`], [Panic if move \_7.1 is true],
+  [`_7 = checked(_1 - 1)`], [Checked Subtract (may panic)],
+  [`→ assert(move _7.1 == false) → bb6`], [Panic if move \_7.1 is true],
 )
 
 === bb6
@@ -448,8 +448,8 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_6 = move \_7.0`], [Move value],
-  [`→ \_5 = fibonacci(move \_6) → bb7`], [Recursive call to fibonacci],
+  [`_6 = move _7.0`], [Move value],
+  [`→ _5 = fibonacci(move _6) → bb7`], [Recursive call to fibonacci],
 )
 
 === bb7
@@ -458,8 +458,8 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_8 = checked(\_2 + \_5)`], [Checked Add (may panic)],
-  [`→ assert(move \_8.1 == false) → bb8`], [Panic if move \_8.1 is true],
+  [`_8 = checked(_2 + _5)`], [Checked Add (may panic)],
+  [`→ assert(move _8.1 == false) → bb8`], [Panic if move \_8.1 is true],
 )
 
 === bb8
@@ -468,7 +468,7 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`\_0 = move \_8.0`], [Move value],
+  [`_0 = move _8.0`], [Move value],
   [`→ goto bb9`], [Jump to bb9],
 )
 
