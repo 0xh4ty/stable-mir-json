@@ -332,6 +332,13 @@ fn build_explorer_stmt(stmt: &Statement, span_index: &SpanIndex) -> ExplorerStmt
             let annotation = annotate_rvalue(rvalue);
             (mir, annotation)
         }
+        StatementKind::SetDiscriminant {
+            place,
+            variant_index,
+        } => (
+            format!("discriminant({}) = {}", render_place(place), variant_index.to_index()),
+            "Set enum discriminant".to_string(),
+        ),
         StatementKind::StorageLive(local) => (
             format!("StorageLive(_{local})"),
             format!("Allocate stack space for _{local}"),
@@ -341,7 +348,38 @@ fn build_explorer_stmt(stmt: &Statement, span_index: &SpanIndex) -> ExplorerStmt
             format!("Deallocate stack space for _{local}"),
         ),
         StatementKind::Nop => ("nop".to_string(), "No operation".to_string()),
-        _ => (format!("{:?}", stmt.kind), String::new()),
+        StatementKind::Retag(_, place) => (
+            format!("retag({})", render_place(place)),
+            "Stacked borrows retag".to_string(),
+        ),
+        StatementKind::FakeRead(_, place) => (
+            format!("FakeRead({})", render_place(place)),
+            "Compiler hint for borrow checker".to_string(),
+        ),
+        StatementKind::PlaceMention(place) => (
+            format!("PlaceMention({})", render_place(place)),
+            "Compiler hint for borrow checker".to_string(),
+        ),
+        StatementKind::Deinit(place) => (
+            format!("Deinit({})", render_place(place)),
+            "Mark place as uninitialized".to_string(),
+        ),
+        StatementKind::AscribeUserType { place, .. } => (
+            format!("AscribeUserType({})", render_place(place)),
+            "User type annotation".to_string(),
+        ),
+        StatementKind::Intrinsic(_) => (
+            "intrinsic".to_string(),
+            "Compiler intrinsic".to_string(),
+        ),
+        StatementKind::ConstEvalCounter => (
+            "ConstEvalCounter".to_string(),
+            "Const evaluation counter".to_string(),
+        ),
+        StatementKind::Coverage(_) => (
+            "coverage".to_string(),
+            "Code coverage instrumentation".to_string(),
+        ),
     };
 
     ExplorerStmt {
