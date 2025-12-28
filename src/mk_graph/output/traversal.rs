@@ -11,16 +11,11 @@ use stable_mir::mir::{
 };
 use stable_mir::ty::IndexedVal;
 
+// Re-export SpanInfo so output modules can import it from here
+pub use crate::printer::SpanInfo;
 use crate::render::{
     annotate_rvalue, extract_call_name, render_operand, render_place, render_rvalue,
 };
-
-// =============================================================================
-// Common Types
-// =============================================================================
-
-/// Span information: (filename, start_line, start_col, end_line, end_col)
-pub type SpanInfo = (String, usize, usize, usize, usize);
 
 /// Detected properties of a function
 #[derive(Default, Clone)]
@@ -515,7 +510,7 @@ pub fn extract_function_source(
     };
 
     let info = first_span.and_then(|id| span_index.get(&id))?;
-    let (file, _, _, _, _) = info;
+    let file = &info.file;
 
     if file.contains(".rustup") || file.contains("no-location") {
         return None;
@@ -531,16 +526,16 @@ pub fn extract_function_source(
     for block in &body.blocks {
         for stmt in &block.statements {
             if let Some(span_info) = span_index.get(&stmt.span.to_index()) {
-                if span_info.0 == *file {
-                    min_line = min_line.min(span_info.1);
-                    max_line = max_line.max(span_info.3);
+                if span_info.file == *file {
+                    min_line = min_line.min(span_info.line_start);
+                    max_line = max_line.max(span_info.line_end);
                 }
             }
         }
         if let Some(span_info) = span_index.get(&block.terminator.span.to_index()) {
-            if span_info.0 == *file {
-                min_line = min_line.min(span_info.1);
-                max_line = max_line.max(span_info.3);
+            if span_info.file == *file {
+                min_line = min_line.min(span_info.line_start);
+                max_line = max_line.max(span_info.line_end);
             }
         }
     }

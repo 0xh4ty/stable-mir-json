@@ -512,7 +512,26 @@ type LinkMap<'tcx> = HashMap<LinkMapKey<'tcx>, (ItemSource, FnSymType)>;
 type AllocMap = HashMap<stable_mir::mir::alloc::AllocId, (stable_mir::ty::Ty, GlobalAlloc)>;
 type TyMap =
     HashMap<stable_mir::ty::Ty, (stable_mir::ty::TyKind, Option<stable_mir::abi::LayoutShape>)>;
-type SpanMap = HashMap<usize, (String, usize, usize, usize, usize)>;
+
+/// Source location information for a span
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Serialize)]
+pub struct SpanInfo {
+    pub file: String,
+    pub line_start: usize,
+    pub col_start: usize,
+    pub line_end: usize,
+    pub col_end: usize,
+}
+
+impl SpanInfo {
+    /// Format as "file:line" for compact display
+    pub fn short(&self) -> String {
+        let file = self.file.rsplit('/').next().unwrap_or(&self.file);
+        format!("{}:{}", file, self.line_start)
+    }
+}
+
+type SpanMap = HashMap<usize, SpanInfo>;
 
 struct TyCollector<'tcx> {
     tcx: TyCtxt<'tcx>,
@@ -867,7 +886,13 @@ impl MirVisitor for InternedValueCollector<'_, '_> {
         };
         self.spans.insert(
             span.to_index(),
-            (file_name, lo_line, lo_col, hi_line, hi_col),
+            SpanInfo {
+                file: file_name,
+                line_start: lo_line,
+                col_start: lo_col,
+                line_end: hi_line,
+                col_end: hi_col,
+            },
         );
     }
 
@@ -1348,8 +1373,6 @@ fn mk_type_metadata(
     }
 }
 
-type SourceData = (String, usize, usize, usize, usize);
-
 /// the serialised data structure as a whole
 #[derive(Serialize)]
 pub struct SmirJson<'t> {
@@ -1360,7 +1383,7 @@ pub struct SmirJson<'t> {
     pub uneval_consts: Vec<(ConstDef, String)>,
     pub items: Vec<Item>,
     pub types: Vec<(stable_mir::ty::Ty, TypeMetadata)>,
-    pub spans: Vec<(usize, SourceData)>,
+    pub spans: Vec<(usize, SpanInfo)>,
     pub debug: Option<SmirJsonDebugInfo<'t>>,
     pub machine: stable_mir::target::MachineInfo,
 }

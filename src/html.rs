@@ -23,15 +23,12 @@ use stable_mir::ty::IndexedVal;
 
 use crate::assets::{embedded, RENDER_LOCAL_JS};
 use crate::explore::{build_explorer_function, ExplorerFunction};
-use crate::printer::{collect_smir, SmirJson};
+use crate::printer::{collect_smir, SmirJson, SpanInfo};
 use crate::render::{
     annotate_rvalue, escape_html, extract_call_name, render_operand, render_place, render_rvalue,
     short_fn_name,
 };
 use crate::MonoItemKind;
-
-/// Span information: (filename, start_line, start_col, end_line, end_col)
-type SpanInfo = (String, usize, usize, usize, usize);
 
 /// A row in the three-column display
 struct AnnotatedRow {
@@ -782,15 +779,13 @@ fn extract_terminator_source(term: &Terminator, span_index: &HashMap<usize, &Spa
 
 /// Extract a single source line from span info
 fn extract_source_line(info: &SpanInfo) -> Option<String> {
-    let (file, start_line, _, _, _) = info;
-
-    if file.contains(".rustup") || file.contains("no-location") {
+    if info.file.contains(".rustup") || info.file.contains("no-location") {
         return None;
     }
 
-    let content = std::fs::read_to_string(file).ok()?;
+    let content = std::fs::read_to_string(&info.file).ok()?;
     let lines: Vec<&str> = content.lines().collect();
-    let line_idx = start_line.saturating_sub(1);
+    let line_idx = info.line_start.saturating_sub(1);
 
     lines.get(line_idx).map(|s| s.trim().to_string())
 }

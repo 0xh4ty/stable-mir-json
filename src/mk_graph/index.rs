@@ -7,7 +7,7 @@ use stable_mir::mir::alloc::GlobalAlloc;
 use stable_mir::ty::{IndexedVal, Ty};
 use stable_mir::CrateDef;
 
-use crate::printer::{AllocInfo, TypeMetadata};
+use crate::printer::{AllocInfo, SpanInfo, TypeMetadata};
 
 use super::util::bytes_to_u64_le;
 use super::{MAX_NUMERIC_BYTES, MAX_STRING_PREVIEW_LEN};
@@ -253,23 +253,11 @@ impl TypeIndex {
 // Span Index
 // =============================================================================
 
-/// Raw span data tuple: (file, line_start, col_start, line_end, col_end)
-pub type SpanData = (String, usize, usize, usize, usize);
-
-/// Index for looking up span/source location information
+/// Index for looking up span/source location information.
+/// Wraps a HashMap for convenient lookup by span ID.
 #[derive(Default)]
 pub struct SpanIndex {
     by_id: HashMap<usize, SpanInfo>,
-}
-
-/// Source location information for a span
-#[derive(Clone)]
-pub struct SpanInfo {
-    pub file: String,
-    pub line_start: usize,
-    pub col_start: usize,
-    pub line_end: usize,
-    pub col_end: usize,
 }
 
 impl SpanIndex {
@@ -277,36 +265,17 @@ impl SpanIndex {
         Self::default()
     }
 
-    pub fn from_spans(spans: &[(usize, SpanData)]) -> Self {
+    /// Build index from spans collected by SmirJson
+    pub fn from_spans(spans: &[(usize, SpanInfo)]) -> Self {
         let by_id = spans
             .iter()
-            .map(|(id, (file, lo_line, lo_col, hi_line, hi_col))| {
-                (
-                    *id,
-                    SpanInfo {
-                        file: file.clone(),
-                        line_start: *lo_line,
-                        col_start: *lo_col,
-                        line_end: *hi_line,
-                        col_end: *hi_col,
-                    },
-                )
-            })
+            .map(|(id, info)| (*id, info.clone()))
             .collect();
         Self { by_id }
     }
 
     pub fn get(&self, span_id: usize) -> Option<&SpanInfo> {
         self.by_id.get(&span_id)
-    }
-}
-
-impl SpanInfo {
-    /// Format as "file:line" for compact display
-    pub fn short(&self) -> String {
-        // Extract just the filename from the path
-        let file = self.file.rsplit('/').next().unwrap_or(&self.file);
-        format!("{}:{}", file, self.line_start)
     }
 }
 

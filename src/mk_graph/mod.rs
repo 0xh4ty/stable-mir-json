@@ -33,9 +33,7 @@ pub mod util;
 
 // Re-export commonly used items
 pub use context::GraphContext;
-pub use index::{
-    AllocEntry, AllocIndex, AllocKind, FunctionKey, SpanData, SpanIndex, SpanInfo, TypeIndex,
-};
+pub use index::{AllocEntry, AllocIndex, AllocKind, FunctionKey, SpanIndex, TypeIndex};
 pub use util::{GraphLabelString, MAX_NUMERIC_BYTES, MAX_STRING_PREVIEW_LEN};
 
 // =============================================================================
