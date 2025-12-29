@@ -11,7 +11,7 @@ use stable_mir::mir::{
 };
 use stable_mir::ty::IndexedVal;
 
-pub use crate::mk_graph::index::{BorrowIndex, SpanIndex};
+pub use crate::mk_graph::index::{BorrowIndex, BorrowInfo, BorrowKindInfo, SpanIndex};
 // Re-export SpanInfo so output modules can import it from here
 pub use crate::printer::SpanInfo;
 use crate::render::{
@@ -937,5 +937,54 @@ impl<'a> FunctionContext<'a> {
     /// Get formatted property strings
     pub fn property_strings(&self) -> Vec<&'static str> {
         format_properties(&self.properties)
+    }
+
+    /// Check if this function has any borrows
+    pub fn has_borrows(&self) -> bool {
+        !self.borrow_index.borrows.is_empty()
+    }
+
+    /// Get all borrows in this function
+    pub fn borrows(&self) -> &[BorrowInfo] {
+        &self.borrow_index.borrows
+    }
+
+    /// Get borrows active at a specific CFG location
+    pub fn borrows_at(&self, block: usize, statement: usize) -> Vec<&BorrowInfo> {
+        self.borrow_index
+            .active_at(block, statement)
+            .iter()
+            .filter_map(|&idx| self.borrow_index.get(idx))
+            .collect()
+    }
+
+    /// Format a borrow for display
+    pub fn format_borrow(&self, borrow: &BorrowInfo) -> String {
+        let kind = match borrow.kind {
+            BorrowKindInfo::Shared => "&",
+            BorrowKindInfo::Mutable => "&mut",
+            BorrowKindInfo::Shallow => "&shallow",
+        };
+        format!(
+            "_{} = {}_{}",
+            borrow.borrower_local, kind, borrow.borrowed_local
+        )
+    }
+
+    /// Format borrow with lifetime info
+    pub fn format_borrow_with_lifetime(&self, borrow: &BorrowInfo) -> String {
+        let kind_str = match borrow.kind {
+            BorrowKindInfo::Shared => "shared",
+            BorrowKindInfo::Mutable => "mutable",
+            BorrowKindInfo::Shallow => "shallow",
+        };
+        format!(
+            "_{} borrows _{} ({}) at bb{}[{}]",
+            borrow.borrower_local,
+            borrow.borrowed_local,
+            kind_str,
+            borrow.start_location.block,
+            borrow.start_location.statement
+        )
     }
 }

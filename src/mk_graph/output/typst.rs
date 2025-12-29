@@ -150,6 +150,36 @@ fn generate_function_typst(ctx: &FunctionContext) -> String {
     }
     typ.push_str(")\n\n");
 
+    // === Borrows ===
+    if ctx.has_borrows() {
+        typ.push_str("== Borrows\n\n");
+        typ.push_str("#table(\n");
+        typ.push_str("  columns: (auto, auto, auto, auto, auto),\n");
+        typ.push_str("  align: (center, center, center, center, center),\n");
+        typ.push_str("  [*\\#*], [*Borrow*], [*Kind*], [*Created At*], [*Borrowed*],\n");
+
+        for borrow in ctx.borrows() {
+            let kind = match borrow.kind {
+                super::traversal::BorrowKindInfo::Shared => "`&`",
+                super::traversal::BorrowKindInfo::Mutable => "`&mut`",
+                super::traversal::BorrowKindInfo::Shallow => "`&shallow`",
+            };
+            typ.push_str(&format!(
+                "  [{}], [`_{}`], [{}], [`bb{}[{}]`], [`_{}`],\n",
+                borrow.index,
+                borrow.borrower_local,
+                kind,
+                borrow.start_location.block,
+                borrow.start_location.statement,
+                borrow.borrowed_local
+            ));
+        }
+        typ.push_str(")\n\n");
+        typ.push_str("#text(size: 9pt, fill: rgb(\"#666666\"))[\n");
+        typ.push_str("  _Borrows are tracked conservatively: active from creation until reassignment or scope end._\n");
+        typ.push_str("]\n\n");
+    }
+
     // === Control-Flow Diagram ===
     typ.push_str("== Control-Flow Overview\n\n");
     typ.push_str(&ctx.typst_cfg());

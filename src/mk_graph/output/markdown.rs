@@ -130,6 +130,32 @@ fn generate_function_markdown(ctx: &FunctionContext) -> String {
     }
     md.push_str("\n> *Note: Locals are numbered in declaration order; temporaries introduced by lowering may not map 1-to-1 with source variables.*\n\n");
 
+    // === Borrows ===
+    if ctx.has_borrows() {
+        md.push_str("---\n\n");
+        md.push_str("## Borrows\n\n");
+        md.push_str("| # | Borrow | Kind | Created At | Borrowed Local |\n");
+        md.push_str("|---|--------|------|------------|----------------|\n");
+
+        for borrow in ctx.borrows() {
+            let kind = match borrow.kind {
+                super::traversal::BorrowKindInfo::Shared => "`&`",
+                super::traversal::BorrowKindInfo::Mutable => "`&mut`",
+                super::traversal::BorrowKindInfo::Shallow => "`&shallow`",
+            };
+            md.push_str(&format!(
+                "| {} | `_{}` | {} | `bb{}[{}]` | `_{}` |\n",
+                borrow.index,
+                borrow.borrower_local,
+                kind,
+                borrow.start_location.block,
+                borrow.start_location.statement,
+                borrow.borrowed_local
+            ));
+        }
+        md.push_str("\n> *Borrows are tracked conservatively: a borrow is considered active from creation until the borrower is reassigned or goes out of scope.*\n\n");
+    }
+
     // === Control-Flow Overview ===
     md.push_str("---\n\n");
     md.push_str("## Control-Flow Overview\n\n");

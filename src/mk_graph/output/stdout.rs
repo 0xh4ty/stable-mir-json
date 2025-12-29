@@ -90,6 +90,27 @@ fn generate_function_text(ctx: &FunctionContext) -> String {
         out.push_str(&format!("│   {}: {}{}\n", index, decl.ty, note));
     }
 
+    // Borrows
+    if ctx.has_borrows() {
+        out.push_str("│\n│ Borrows:\n");
+        for borrow in ctx.borrows() {
+            let kind = match borrow.kind {
+                super::traversal::BorrowKindInfo::Shared => "&",
+                super::traversal::BorrowKindInfo::Mutable => "&mut",
+                super::traversal::BorrowKindInfo::Shallow => "&shallow",
+            };
+            out.push_str(&format!(
+                "│   #{}: _{} = {}_{} at bb{}[{}]\n",
+                borrow.index,
+                borrow.borrower_local,
+                kind,
+                borrow.borrowed_local,
+                borrow.start_location.block,
+                borrow.start_location.statement
+            ));
+        }
+    }
+
     // CFG
     out.push_str("│\n│ Control Flow:\n");
     for line in ctx.ascii_cfg().lines() {

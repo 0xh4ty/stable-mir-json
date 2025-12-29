@@ -23,6 +23,7 @@ use stable_mir::ty::IndexedVal;
 
 use crate::assets::{embedded, RENDER_LOCAL_JS};
 use crate::explore::{build_explorer_function, ExplorerFunction};
+use crate::mk_graph::index::{BorrowIndex, BorrowKindInfo, SpanIndex};
 use crate::printer::{collect_smir, SmirJson, SpanInfo};
 use crate::render::{
     annotate_rvalue, escape_html, extract_call_name, render_operand, render_place, render_rvalue,
@@ -63,9 +64,10 @@ pub fn emit_html(tcx: TyCtxt<'_>) {
 fn generate_html(smir: &SmirJson) -> String {
     let mut content = String::new();
 
-    // Build span index for source lookups
+    // Build span index for source lookups (both HashMap for legacy and SpanIndex for borrows)
     let span_index: HashMap<usize, &SpanInfo> =
         smir.spans.iter().map(|(id, info)| (*id, info)).collect();
+    let span_index_struct = SpanIndex::from_spans(&smir.spans);
 
     // Generate content for each function
     for item in &smir.items {
@@ -82,6 +84,9 @@ fn generate_html(smir: &SmirJson) -> String {
 
         let short_name = short_fn_name(name);
 
+        // Compute borrows for this function
+        let borrow_index = BorrowIndex::from_body(body, &span_index_struct);
+
         // Function header
         content.push_str(&format!(
             r#"<section class="function">
@@ -92,6 +97,11 @@ fn generate_html(smir: &SmirJson) -> String {
             body.blocks.len(),
             escape_html(name)
         ));
+
+        // Borrows panel (if any)
+        if !borrow_index.borrows.is_empty() {
+            content.push_str(&render_borrows_panel(&borrow_index));
+        }
 
         // Explorer panel (collapsible)
         let explorer_fn = build_explorer_function(name, body, &span_index);
@@ -162,6 +172,62 @@ fn generate_html(smir: &SmirJson) -> String {
             padding: 0.2rem 0.4rem;
             border-radius: 3px;
             font-size: 0.85rem;
+        }}
+        .borrows-section {{
+            margin-bottom: 1rem;
+        }}
+        .borrows-section summary {{
+            cursor: pointer;
+            color: var(--accent);
+            font-weight: 600;
+            padding: 0.5rem 0;
+        }}
+        .borrows-table {{
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin: 0.5rem 0;
+        }}
+        .borrows-table th {{
+            text-align: left;
+            padding: 0.4rem 0.8rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-dim);
+            font-weight: normal;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }}
+        .borrows-table td {{
+            padding: 0.4rem 0.8rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }}
+        .borrow-id {{
+            color: var(--text-dim);
+            font-weight: 600;
+        }}
+        .borrow-kind {{
+            padding: 0.15rem 0.4rem;
+            border-radius: 3px;
+            font-size: 0.8rem;
+            font-family: monospace;
+        }}
+        .borrow-kind.shared {{
+            background: rgba(80, 250, 123, 0.2);
+            color: var(--green);
+        }}
+        .borrow-kind.mutable {{
+            background: rgba(255, 121, 198, 0.2);
+            color: var(--pink);
+        }}
+        .borrow-kind.shallow {{
+            background: rgba(139, 233, 253, 0.2);
+            color: var(--accent);
+        }}
+        .borrows-note {{
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            font-style: italic;
+            margin: 0.5rem 0;
         }}
         .block {{
             background: var(--bg-block);
@@ -521,6 +587,64 @@ fn render_block_html(idx: usize, rows: &[AnnotatedRow]) -> String {
     }
 
     html.push_str("            </tbody>\n        </table>\n    </div>\n");
+    html
+}
+
+/// Render the borrows panel for a function
+fn render_borrows_panel(borrow_index: &BorrowIndex) -> String {
+    let mut html = String::new();
+
+    html.push_str(r#"    <details class="borrows-section" open>
+        <summary>Borrows</summary>
+        <table class="borrows-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Borrow</th>
+                    <th>Kind</th>
+                    <th>Created At</th>
+                    <th>Borrowed</th>
+                </tr>
+            </thead>
+            <tbody>
+"#);
+
+    for borrow in &borrow_index.borrows {
+        let kind = match borrow.kind {
+            BorrowKindInfo::Shared => "&amp;",
+            BorrowKindInfo::Mutable => "&amp;mut",
+            BorrowKindInfo::Shallow => "&amp;shallow",
+        };
+        let kind_class = match borrow.kind {
+            BorrowKindInfo::Shared => "shared",
+            BorrowKindInfo::Mutable => "mutable",
+            BorrowKindInfo::Shallow => "shallow",
+        };
+        html.push_str(&format!(
+            r#"                <tr>
+                    <td class="borrow-id">{}</td>
+                    <td><code>_{}</code></td>
+                    <td><span class="borrow-kind {}">{}</span></td>
+                    <td><code>bb{}[{}]</code></td>
+                    <td><code>_{}</code></td>
+                </tr>
+"#,
+            borrow.index,
+            borrow.borrower_local,
+            kind_class,
+            kind,
+            borrow.start_location.block,
+            borrow.start_location.statement,
+            borrow.borrowed_local
+        ));
+    }
+
+    html.push_str(r#"            </tbody>
+        </table>
+        <p class="borrows-note">Borrows tracked conservatively: active from creation until reassignment or scope end.</p>
+    </details>
+"#);
+
     html
 }
 
