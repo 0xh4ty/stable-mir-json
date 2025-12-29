@@ -2,7 +2,6 @@
 //!
 //! Generates human-readable MIR output for the terminal.
 
-use std::collections::HashMap;
 use std::io::{self, Write};
 
 extern crate rustc_middle;
@@ -12,7 +11,7 @@ use crate::printer::{collect_smir, SmirJson};
 use crate::render::short_fn_name;
 use crate::MonoItemKind;
 
-use super::traversal::{BlockRole, FunctionContext, SpanInfo};
+use super::traversal::{BlockRole, FunctionContext, SpanIndex};
 
 /// Entry point to emit annotated MIR to stdout
 pub fn emit_stdout(tcx: TyCtxt<'_>) {
@@ -26,8 +25,7 @@ fn generate_text(smir: &SmirJson) -> String {
     let mut content = String::new();
 
     // Build span index for source lookups
-    let span_index: HashMap<usize, &SpanInfo> =
-        smir.spans.iter().map(|(id, info)| (*id, info)).collect();
+    let span_index = SpanIndex::from_spans(&smir.spans);
 
     // Header
     content.push_str(&format!("=== {} ===\n\n", smir.name));

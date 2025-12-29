@@ -11,6 +11,7 @@ use stable_mir::mir::{
 };
 use stable_mir::ty::IndexedVal;
 
+pub use crate::mk_graph::index::{BorrowIndex, SpanIndex};
 // Re-export SpanInfo so output modules can import it from here
 pub use crate::printer::SpanInfo;
 use crate::render::{
@@ -566,6 +567,80 @@ pub fn extract_function_source(
     Some(source_lines.join("\n"))
 }
 
+/// Extract function source using SpanIndex (struct-based lookup)
+fn extract_function_source_from_index(span_index: &SpanIndex, body: &Body) -> Option<String> {
+    // Try to find the span covering the function body
+    let first_span = if !body.blocks.is_empty() {
+        let block = &body.blocks[0];
+        if !block.statements.is_empty() {
+            Some(block.statements[0].span.to_index())
+        } else {
+            Some(block.terminator.span.to_index())
+        }
+    } else {
+        None
+    };
+
+    let info = first_span.and_then(|id| span_index.get(id))?;
+    let file = &info.file;
+
+    if file.contains(".rustup") || file.contains("no-location") {
+        return None;
+    }
+
+    // Read the source file and extract relevant lines
+    let content = std::fs::read_to_string(file).ok()?;
+
+    // Find function boundaries by looking at all spans
+    let mut min_line = usize::MAX;
+    let mut max_line = 0usize;
+
+    for block in &body.blocks {
+        for stmt in &block.statements {
+            if let Some(span_info) = span_index.get(stmt.span.to_index()) {
+                if span_info.file == *file {
+                    min_line = min_line.min(span_info.line_start);
+                    max_line = max_line.max(span_info.line_end);
+                }
+            }
+        }
+        if let Some(span_info) = span_index.get(block.terminator.span.to_index()) {
+            if span_info.file == *file {
+                min_line = min_line.min(span_info.line_start);
+                max_line = max_line.max(span_info.line_end);
+            }
+        }
+    }
+
+    if min_line == usize::MAX {
+        return None;
+    }
+
+    // Expand to include function signature (look for fn keyword above)
+    let lines: Vec<&str> = content.lines().collect();
+    let mut start = min_line.saturating_sub(1);
+    while start > 0 {
+        let line = lines.get(start - 1).unwrap_or(&"");
+        if line.trim().starts_with("fn ") || line.trim().starts_with("pub fn ") {
+            start -= 1;
+            break;
+        }
+        if line.trim().is_empty()
+            || line.trim().starts_with("//")
+            || line.trim().starts_with("#[")
+        {
+            start -= 1;
+        } else {
+            break;
+        }
+    }
+
+    // Extract lines
+    let end = max_line.min(lines.len());
+    let source_lines: Vec<&str> = lines[start..end].to_vec();
+    Some(source_lines.join("\n"))
+}
+
 // =============================================================================
 // Typst CFG Diagram Generation
 // =============================================================================
@@ -812,6 +887,7 @@ pub struct FunctionContext<'a> {
     pub properties: FunctionProperties,
     pub block_roles: HashMap<usize, BlockRole>,
     pub source: Option<String>,
+    pub borrow_index: BorrowIndex,
 }
 
 impl<'a> FunctionContext<'a> {
@@ -820,11 +896,12 @@ impl<'a> FunctionContext<'a> {
         short_name: &'a str,
         full_name: &'a str,
         body: &'a Body,
-        span_index: &HashMap<usize, &SpanInfo>,
+        span_index: &SpanIndex,
     ) -> Self {
         let properties = analyze_function(body, short_name);
         let block_roles = infer_block_roles(body);
-        let source = extract_function_source(span_index, body);
+        let source = extract_function_source_from_index(span_index, body);
+        let borrow_index = BorrowIndex::from_body(body, span_index);
 
         Self {
             short_name,
@@ -833,6 +910,7 @@ impl<'a> FunctionContext<'a> {
             properties,
             block_roles,
             source,
+            borrow_index,
         }
     }
 

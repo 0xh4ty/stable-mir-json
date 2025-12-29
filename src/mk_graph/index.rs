@@ -4,6 +4,9 @@ use std::collections::{HashMap, HashSet};
 
 extern crate stable_mir;
 use stable_mir::mir::alloc::GlobalAlloc;
+use stable_mir::mir::{
+    Body, BorrowKind, Place, Rvalue, Statement, StatementKind, Terminator, TerminatorKind,
+};
 use stable_mir::ty::{IndexedVal, Ty};
 use stable_mir::CrateDef;
 
@@ -289,4 +292,346 @@ impl SpanIndex {
 pub struct FunctionKey {
     pub ty: Ty,
     pub instance_desc: Option<String>,
+}
+
+// =============================================================================
+// Borrow Index
+// =============================================================================
+
+/// A borrow operation detected in MIR
+#[derive(Clone, Debug)]
+pub struct BorrowInfo {
+    /// Index of this borrow (for cross-referencing)
+    pub index: usize,
+    /// The local receiving the reference (_2 in `_2 = &_1`)
+    pub borrower_local: usize,
+    /// The local being borrowed (_1 in `_2 = &_1`)
+    pub borrowed_local: usize,
+    /// Kind of borrow
+    pub kind: BorrowKindInfo,
+    /// Location where borrow is created
+    pub start_location: LocationKey,
+    /// Span ID for source mapping
+    pub span_id: usize,
+}
+
+/// Simplified borrow kind for downstream consumers
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum BorrowKindInfo {
+    /// &T
+    Shared,
+    /// &mut T
+    Mutable,
+    /// Used in match guards
+    Shallow,
+}
+
+/// A CFG location (block + statement index)
+#[derive(Clone, Debug, Hash, Eq, PartialEq)]
+pub struct LocationKey {
+    pub block: usize,
+    pub statement: usize,
+}
+
+/// Index for tracking borrows and their lifetimes
+#[derive(Default)]
+pub struct BorrowIndex {
+    /// All borrows in the function
+    pub borrows: Vec<BorrowInfo>,
+    /// For each CFG location, which borrow indices are active
+    pub active_at_location: HashMap<LocationKey, Vec<usize>>,
+    /// For each source line, which borrow indices are active
+    pub active_at_line: HashMap<usize, Vec<usize>>,
+}
+
+impl BorrowIndex {
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    /// Build borrow index from a MIR body
+    ///
+    /// Scans the body for Rvalue::Ref operations and tracks:
+    /// 1. Where each borrow is created
+    /// 2. A conservative estimate of where each borrow is active
+    ///    (from creation until the borrower local goes dead or is reassigned)
+    pub fn from_body(body: &Body, span_index: &SpanIndex) -> Self {
+        let mut index = Self::new();
+        let mut borrow_count = 0;
+
+        // Pass 1: Find all borrows
+        for (block_idx, block) in body.blocks.iter().enumerate() {
+            for (stmt_idx, stmt) in block.statements.iter().enumerate() {
+                if let StatementKind::Assign(place, rvalue) = &stmt.kind {
+                    if let Some(borrow_info) = extract_borrow(
+                        place,
+                        rvalue,
+                        block_idx,
+                        stmt_idx,
+                        stmt.span.to_index(),
+                        borrow_count,
+                    ) {
+                        index.borrows.push(borrow_info);
+                        borrow_count += 1;
+                    }
+                }
+            }
+        }
+
+        // Pass 2: Compute active ranges (conservative: start to StorageDead/reassign)
+        index.compute_active_ranges(body);
+
+        // Pass 3: Map to source lines
+        index.map_to_source_lines(span_index);
+
+        index
+    }
+
+    /// Get borrows active at a specific CFG location
+    pub fn active_at(&self, block: usize, statement: usize) -> &[usize] {
+        let key = LocationKey { block, statement };
+        self.active_at_location
+            .get(&key)
+            .map(|v| v.as_slice())
+            .unwrap_or(&[])
+    }
+
+    /// Get borrows active at a source line
+    pub fn active_at_source_line(&self, line: usize) -> &[usize] {
+        self.active_at_line
+            .get(&line)
+            .map(|v| v.as_slice())
+            .unwrap_or(&[])
+    }
+
+    /// Get a borrow by index
+    pub fn get(&self, index: usize) -> Option<&BorrowInfo> {
+        self.borrows.get(index)
+    }
+
+    /// Compute where each borrow is active (conservative analysis)
+    ///
+    /// A borrow is active from its creation until:
+    /// - The borrower local has StorageDead
+    /// - The borrower local is reassigned
+    /// - The function returns
+    fn compute_active_ranges(&mut self, body: &Body) {
+        for borrow in &self.borrows {
+            let borrower = borrow.borrower_local;
+            let start = &borrow.start_location;
+
+            // Track this borrow as active from start through the CFG
+            // until we hit a kill point
+            let mut visited = HashSet::new();
+            let mut worklist = vec![(start.block, start.statement)];
+
+            while let Some((block_idx, mut stmt_idx)) = worklist.pop() {
+                if !visited.insert((block_idx, stmt_idx)) {
+                    continue;
+                }
+
+                let block = &body.blocks[block_idx];
+
+                // Process statements from stmt_idx onwards
+                while stmt_idx <= block.statements.len() {
+                    let loc = LocationKey {
+                        block: block_idx,
+                        statement: stmt_idx,
+                    };
+
+                    // Mark as active
+                    self.active_at_location
+                        .entry(loc)
+                        .or_default()
+                        .push(borrow.index);
+
+                    // Check for kill conditions
+                    if stmt_idx < block.statements.len() {
+                        let stmt = &block.statements[stmt_idx];
+                        if kills_borrow(stmt, borrower) {
+                            break; // Borrow ends here
+                        }
+                    }
+
+                    stmt_idx += 1;
+                }
+
+                // If we reached the terminator without killing, propagate to successors
+                if stmt_idx > block.statements.len() {
+                    // Check if terminator kills the borrow
+                    if !terminator_kills_borrow(&block.terminator, borrower) {
+                        // Add successor blocks to worklist
+                        for target in get_terminator_targets(&block.terminator) {
+                            worklist.push((target, 0));
+                        }
+                    }
+                }
+            }
+        }
+
+        // Deduplicate active borrow lists
+        for borrows in self.active_at_location.values_mut() {
+            borrows.sort();
+            borrows.dedup();
+        }
+    }
+
+    /// Map active borrows to source lines
+    fn map_to_source_lines(&mut self, span_index: &SpanIndex) {
+        // For each borrow, find its source line range and mark as active
+        for borrow in &self.borrows {
+            if let Some(span_info) = span_index.get(borrow.span_id) {
+                // Find all locations where this borrow is active
+                for (_loc, borrow_indices) in &self.active_at_location {
+                    if borrow_indices.contains(&borrow.index) {
+                        // Add to lines covered by the borrow's span
+                        for line in span_info.line_start..=span_info.line_end {
+                            self.active_at_line.entry(line).or_default().push(borrow.index);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Deduplicate
+        for borrows in self.active_at_line.values_mut() {
+            borrows.sort();
+            borrows.dedup();
+        }
+    }
+}
+
+/// Extract borrow info from an assignment if it's a borrow
+fn extract_borrow(
+    place: &Place,
+    rvalue: &Rvalue,
+    block_idx: usize,
+    stmt_idx: usize,
+    span_id: usize,
+    index: usize,
+) -> Option<BorrowInfo> {
+    // Only direct local assignments (no projections on LHS)
+    if !place.projection.is_empty() {
+        return None;
+    }
+
+    let borrower_local = place.local;
+
+    match rvalue {
+        Rvalue::Ref(_region, borrow_kind, borrowed_place) => {
+            // Only track borrows of direct locals for now
+            if !borrowed_place.projection.is_empty() {
+                return None;
+            }
+
+            let kind = match borrow_kind {
+                BorrowKind::Shared => BorrowKindInfo::Shared,
+                BorrowKind::Mut { .. } => BorrowKindInfo::Mutable,
+                BorrowKind::Fake(_) => BorrowKindInfo::Shallow,
+            };
+
+            Some(BorrowInfo {
+                index,
+                borrower_local,
+                borrowed_local: borrowed_place.local,
+                kind,
+                start_location: LocationKey {
+                    block: block_idx,
+                    statement: stmt_idx,
+                },
+                span_id,
+            })
+        }
+        _ => None,
+    }
+}
+
+/// Check if a statement kills a borrow (ends its lifetime)
+fn kills_borrow(stmt: &Statement, borrower: usize) -> bool {
+    match &stmt.kind {
+        // StorageDead kills the borrow
+        StatementKind::StorageDead(local) if *local == borrower => true,
+
+        // Reassignment kills the borrow
+        StatementKind::Assign(place, _)
+            if place.projection.is_empty() && place.local == borrower =>
+        {
+            true
+        }
+
+        _ => false,
+    }
+}
+
+/// Check if a terminator kills a borrow
+fn terminator_kills_borrow(term: &Terminator, borrower: usize) -> bool {
+    match &term.kind {
+        // Drop of the borrower kills the borrow
+        TerminatorKind::Drop { place, .. }
+            if place.projection.is_empty() && place.local == borrower =>
+        {
+            true
+        }
+
+        // Return ends all borrows
+        TerminatorKind::Return => true,
+
+        _ => false,
+    }
+}
+
+/// Get target block indices from a terminator
+fn get_terminator_targets(term: &Terminator) -> Vec<usize> {
+    use stable_mir::mir::UnwindAction;
+
+    match &term.kind {
+        TerminatorKind::Goto { target } => vec![*target],
+        TerminatorKind::SwitchInt { targets, .. } => {
+            let mut result: Vec<usize> = targets.branches().map(|(_, t)| t).collect();
+            result.push(targets.otherwise());
+            result
+        }
+        TerminatorKind::Return
+        | TerminatorKind::Resume
+        | TerminatorKind::Abort
+        | TerminatorKind::Unreachable => vec![],
+        TerminatorKind::Drop { target, unwind, .. } => {
+            let mut result = vec![*target];
+            if let UnwindAction::Cleanup(t) = unwind {
+                result.push(*t);
+            }
+            result
+        }
+        TerminatorKind::Call { target, unwind, .. } => {
+            let mut result = vec![];
+            if let Some(t) = target {
+                result.push(*t);
+            }
+            if let UnwindAction::Cleanup(t) = unwind {
+                result.push(*t);
+            }
+            result
+        }
+        TerminatorKind::Assert { target, unwind, .. } => {
+            let mut result = vec![*target];
+            if let UnwindAction::Cleanup(t) = unwind {
+                result.push(*t);
+            }
+            result
+        }
+        TerminatorKind::InlineAsm {
+            destination,
+            unwind,
+            ..
+        } => {
+            let mut result = vec![];
+            if let Some(t) = destination {
+                result.push(*t);
+            }
+            if let UnwindAction::Cleanup(t) = unwind {
+                result.push(*t);
+            }
+            result
+        }
+    }
 }

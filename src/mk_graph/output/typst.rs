@@ -3,7 +3,6 @@
 //! Generates .typ files that can be compiled to PDF with rich typography,
 //! diagrams, and structured layout.
 
-use std::collections::HashMap;
 use std::fs::File;
 use std::io::{self, BufWriter, Write};
 
@@ -17,7 +16,7 @@ use crate::printer::{collect_smir, SmirJson};
 use crate::render::short_fn_name;
 use crate::MonoItemKind;
 
-use super::traversal::{BlockRole, FunctionContext, SpanInfo};
+use super::traversal::{BlockRole, FunctionContext, SpanIndex};
 
 /// Entry point to generate Typst file
 pub fn emit_typstfile(tcx: TyCtxt<'_>) {
@@ -47,8 +46,7 @@ fn generate_typst(smir: &SmirJson) -> String {
     content.push_str(&generate_preamble());
 
     // Build span index for source lookups
-    let span_index: HashMap<usize, &SpanInfo> =
-        smir.spans.iter().map(|(id, info)| (*id, info)).collect();
+    let span_index = SpanIndex::from_spans(&smir.spans);
 
     // Generate content for each function
     for item in &smir.items {

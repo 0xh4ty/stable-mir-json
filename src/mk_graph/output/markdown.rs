@@ -8,7 +8,6 @@
 //! - Basic blocks with inferred titles
 //! - Placeholder sections for human-authored content
 
-use std::collections::HashMap;
 use std::fs::File;
 use std::io::{self, BufWriter, Write};
 
@@ -22,7 +21,7 @@ use crate::printer::{collect_smir, SmirJson};
 use crate::render::short_fn_name;
 use crate::MonoItemKind;
 
-use super::traversal::{BlockRole, FunctionContext, SpanInfo};
+use super::traversal::{BlockRole, FunctionContext, SpanIndex};
 
 /// Entry point to generate Markdown file
 pub fn emit_mdfile(tcx: TyCtxt<'_>) {
@@ -49,8 +48,7 @@ fn generate_markdown(smir: &SmirJson) -> String {
     let mut content = String::new();
 
     // Build span index for source lookups
-    let span_index: HashMap<usize, &SpanInfo> =
-        smir.spans.iter().map(|(id, info)| (*id, info)).collect();
+    let span_index = SpanIndex::from_spans(&smir.spans);
 
     // Generate content for each function
     for item in &smir.items {
