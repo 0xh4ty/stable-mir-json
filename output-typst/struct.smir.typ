@@ -35,7 +35,7 @@
 
 - *Function:* `main`
 - *Basic blocks:* 4
-- *Return type:* `()`
+- *Return type:* `() (0 bytes, align 1)`
 - *Notable properties:*
   - Contains panic path
   - Uses checked arithmetic
@@ -48,14 +48,14 @@
   columns: (auto, 1fr, auto),
   align: (center, left, left),
   [*Local*], [*Type*], [*Notes*],
-  [`0`], [`()`], [Return place],
-  [`1`], [`St`], [],
-  [`2`], [`bool`], [],
-  [`3`], [`u32`], [],
-  [`4`], [`u32`], [],
-  [`5`], [`(u32, bool)`], [],
-  [`6`], [`u32`], [],
-  [`7`], [`!`], [],
+  [`0`], [`() (0 bytes, align 1)`], [Return place],
+  [`1`], [`St (8 bytes, align 4)`], [],
+  [`2`], [`Bool`], [],
+  [`3`], [`Uint(U32)`], [],
+  [`4`], [`Uint(U32)`], [],
+  [`5`], [`(u32, bool) (8 bytes, align 4)`], [],
+  [`6`], [`Uint(U32)`], [],
+  [`7`], [`()`], [],
 )
 
 == Control-Flow Overview

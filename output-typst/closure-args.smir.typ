@@ -33,7 +33,7 @@
 
 - *Function:* `main`
 - *Basic blocks:* 4
-- *Return type:* `()`
+- *Return type:* `() (0 bytes, align 1)`
 - *Notable properties:*
   - Contains panic path
   - Introduces borrows
@@ -45,13 +45,26 @@
   columns: (auto, 1fr, auto),
   align: (center, left, left),
   [*Local*], [*Type*], [*Notes*],
-  [`0`], [`()`], [Return place],
+  [`0`], [`() (0 bytes, align 1)`], [Return place],
   [`1`], [`{closure@tests/integration/programs/closure-args.rs:2:15: 2:28}`], [],
-  [`2`], [`i32`], [],
-  [`3`], [`&{closure@tests/integration/programs/closure-args.rs:2:15: 2:28}`], [],
-  [`4`], [`(i32, i32)`], [],
-  [`5`], [`!`], [],
+  [`2`], [`Int(I32)`], [],
+  [`3`], [`&{closure@tests/integration/programs/closure-args.rs:2:15: 2:28} (8 bytes, align 8)`], [],
+  [`4`], [`(i32, i32) (8 bytes, align 4)`], [],
+  [`5`], [`()`], [],
 )
+
+== Borrows
+
+#table(
+  columns: (auto, auto, auto, auto, auto),
+  align: (center, center, center, center, center),
+  [*\#*], [*Borrow*], [*Kind*], [*Created At*], [*Borrowed*],
+  [0], [`_3`], [`&`], [`bb0[0]`], [`_1`],
+)
+
+#text(size: 9pt, fill: rgb("#666666"))[
+  _Borrows are tracked conservatively: active from creation until reassignment or scope end._
+]
 
 == Control-Flow Overview
 
@@ -190,7 +203,7 @@ fn main() {
 
 - *Function:* `{closure#0}`
 - *Basic blocks:* 2
-- *Return type:* `i32`
+- *Return type:* `Int(I32)`
 - *Notable properties:*
   - Contains panic path
   - Uses checked arithmetic
@@ -202,11 +215,11 @@ fn main() {
   columns: (auto, 1fr, auto),
   align: (center, left, left),
   [*Local*], [*Type*], [*Notes*],
-  [`0`], [`i32`], [Return place],
-  [`1`], [`&{closure@tests/integration/programs/closure-args.rs:2:15: 2:28}`], [],
-  [`2`], [`i32`], [],
-  [`3`], [`i32`], [],
-  [`4`], [`(i32, bool)`], [],
+  [`0`], [`Int(I32)`], [Return place],
+  [`1`], [`&{closure@tests/integration/programs/closure-args.rs:2:15: 2:28} (8 bytes, align 8)`], [],
+  [`2`], [`Int(I32)`], [],
+  [`3`], [`Int(I32)`], [],
+  [`4`], [`(i32, bool) (8 bytes, align 4)`], [],
 )
 
 == Control-Flow Overview

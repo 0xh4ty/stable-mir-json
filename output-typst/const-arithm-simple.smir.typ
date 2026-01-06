@@ -34,7 +34,7 @@
 
 - *Function:* `main`
 - *Basic blocks:* 4
-- *Return type:* `()`
+- *Return type:* `() (0 bytes, align 1)`
 - *Notable properties:*
   - Contains panic path
   - Has conditional branches
@@ -45,11 +45,11 @@
   columns: (auto, 1fr, auto),
   align: (center, left, left),
   [*Local*], [*Type*], [*Notes*],
-  [`0`], [`()`], [Return place],
-  [`1`], [`bool`], [],
-  [`2`], [`usize`], [],
-  [`3`], [`usize`], [],
-  [`4`], [`!`], [],
+  [`0`], [`() (0 bytes, align 1)`], [Return place],
+  [`1`], [`Bool`], [],
+  [`2`], [`Uint(Usize)`], [],
+  [`3`], [`Uint(Usize)`], [],
+  [`4`], [`()`], [],
 )
 
 == Control-Flow Overview
@@ -190,7 +190,7 @@ fn test(x: usize, y:usize) -> bool {
 
 - *Function:* `test`
 - *Basic blocks:* 1
-- *Return type:* `bool`
+- *Return type:* `Bool`
 
 == Locals
 
@@ -198,9 +198,9 @@ fn test(x: usize, y:usize) -> bool {
   columns: (auto, 1fr, auto),
   align: (center, left, left),
   [*Local*], [*Type*], [*Notes*],
-  [`0`], [`bool`], [Return place],
-  [`1`], [`usize`], [],
-  [`2`], [`usize`], [],
+  [`0`], [`Bool`], [Return place],
+  [`1`], [`Uint(Usize)`], [],
+  [`2`], [`Uint(Usize)`], [],
 )
 
 == Control-Flow Overview

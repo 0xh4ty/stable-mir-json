@@ -42,7 +42,7 @@ fn main() {
 
 - *Function:* `main`
 - *Basic blocks:* 6
-- *Return type:* `()`
+- *Return type:* `() (0 bytes, align 1)`
 - *Notable properties:*
   - Contains panic path
   - Has conditional branches
@@ -53,19 +53,19 @@ fn main() {
   columns: (auto, 1fr, auto),
   align: (center, left, left),
   [*Local*], [*Type*], [*Notes*],
-  [`0`], [`()`], [Return place],
-  [`1`], [`WithParam<u32>`], [],
-  [`2`], [`WithParam<u64>`], [],
-  [`3`], [`std::result::Result<u8, usize>`], [],
-  [`4`], [`usize`], [],
-  [`5`], [`std::result::Result<u64, u8>`], [],
-  [`6`], [`u64`], [],
-  [`7`], [`usize`], [],
-  [`8`], [`std::option::Option<usize>`], [],
-  [`9`], [`bool`], [],
-  [`10`], [`u64`], [],
-  [`11`], [`u64`], [],
-  [`12`], [`!`], [],
+  [`0`], [`() (0 bytes, align 1)`], [Return place],
+  [`1`], [`WithParam<u32> (16 bytes, align 8)`], [],
+  [`2`], [`WithParam<u64> (16 bytes, align 8)`], [],
+  [`3`], [`std::result::Result<u8, usize> (16 bytes, align 8)`], [],
+  [`4`], [`Uint(Usize)`], [],
+  [`5`], [`std::result::Result<u64, u8> (16 bytes, align 8)`], [],
+  [`6`], [`Uint(U64)`], [],
+  [`7`], [`Uint(Usize)`], [],
+  [`8`], [`std::option::Option<usize> (16 bytes, align 8)`], [],
+  [`9`], [`Bool`], [],
+  [`10`], [`Uint(U64)`], [],
+  [`11`], [`Uint(U64)`], [],
+  [`12`], [`()`], [],
 )
 
 == Control-Flow Overview

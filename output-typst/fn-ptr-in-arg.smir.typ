@@ -24,20 +24,22 @@
 == Source Context
 
 ```rust
-    let b:u32 = 4294967294 + 1;
-    assert!(a == b)
+fn main() {
+    let bytes: [u8; 8] = [0x15, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
+    let opt: Option<[u8; 8]> = Some(bytes);
+    let result = opt.map(u64::from_le_bytes);
+    assert_eq!(result, Some(21u64));
 }
 ```
 
 == Function Overview
 
 - *Function:* `main`
-- *Basic blocks:* 4
+- *Basic blocks:* 5
 - *Return type:* `() (0 bytes, align 1)`
 - *Notable properties:*
   - Contains panic path
-  - Uses checked arithmetic
-  - Contains assertions
+  - Introduces borrows
   - Has conditional branches
 
 == Locals
@@ -47,16 +49,36 @@
   align: (center, left, left),
   [*Local*], [*Type*], [*Notes*],
   [`0`], [`() (0 bytes, align 1)`], [Return place],
-  [`1`], [`Uint(U32)`], [],
-  [`2`], [`(u32, bool) (8 bytes, align 4)`], [],
-  [`3`], [`Bool`], [],
-  [`4`], [`Uint(U32)`], [],
-  [`5`], [`()`], [],
+  [`1`], [`[u8; 8] (8 bytes, align 1)`], [],
+  [`2`], [`std::option::Option<[u8; 8]> (9 bytes, align 1)`], [],
+  [`3`], [`std::option::Option<u64> (16 bytes, align 8)`], [],
+  [`4`], [`(&std::option::Option<u64>, &std::option::Option<u64>) (16 bytes, align 8)`], [],
+  [`5`], [`&std::option::Option<u64> (8 bytes, align 8)`], [],
+  [`6`], [`&std::option::Option<u64> (8 bytes, align 8)`], [],
+  [`7`], [`&std::option::Option<u64> (8 bytes, align 8)`], [],
+  [`8`], [`&std::option::Option<u64> (8 bytes, align 8)`], [],
+  [`9`], [`Bool`], [],
+  [`10`], [`core::panicking::AssertKind (1 bytes, align 1)`], [],
+  [`11`], [`()`], [],
+  [`12`], [`std::option::Option<std::fmt::Arguments<'_>> (48 bytes, align 8)`], [],
 )
+
+== Borrows
+
+#table(
+  columns: (auto, auto, auto, auto, auto),
+  align: (center, center, center, center, center),
+  [*\#*], [*Borrow*], [*Kind*], [*Created At*], [*Borrowed*],
+  [0], [`_5`], [`&`], [`bb1[0]`], [`_3`],
+)
+
+#text(size: 9pt, fill: rgb("#666666"))[
+  _Borrows are tracked conservatively: active from creation until reassignment or scope end._
+]
 
 == Control-Flow Overview
 
-#box(width: 230pt, height: 154pt, {
+#box(width: 230pt, height: 204pt, {
   place(dx: 100pt, dy: 34pt, line(
     start: (0pt, 0pt), end: (0pt, 26pt),
     stroke: (paint: rgb("#666666"), thickness: 1pt),
@@ -66,18 +88,26 @@
     fill: rgb("#666666"),
   ))
   place(dx: 100pt, dy: 84pt, line(
-    start: (0pt, 0pt), end: (80pt, 26pt),
+    start: (0pt, 0pt), end: (0pt, 26pt),
     stroke: (paint: rgb("#666666"), thickness: 1pt),
   ))
-  place(dx: 176pt, dy: 104pt, polygon(
+  place(dx: 96pt, dy: 104pt, polygon(
     (0pt, 0pt), (4pt, 6pt), (8pt, 0pt),
     fill: rgb("#666666"),
   ))
-  place(dx: 100pt, dy: 84pt, line(
+  place(dx: 100pt, dy: 134pt, line(
+    start: (0pt, 0pt), end: (80pt, 26pt),
+    stroke: (paint: rgb("#666666"), thickness: 1pt),
+  ))
+  place(dx: 176pt, dy: 154pt, polygon(
+    (0pt, 0pt), (4pt, 6pt), (8pt, 0pt),
+    fill: rgb("#666666"),
+  ))
+  place(dx: 100pt, dy: 134pt, line(
     start: (0pt, 0pt), end: (-40pt, 26pt),
     stroke: (paint: rgb("#666666"), thickness: 1pt),
   ))
-  place(dx: 56pt, dy: 104pt, polygon(
+  place(dx: 56pt, dy: 154pt, polygon(
     (0pt, 0pt), (4pt, 6pt), (8pt, 0pt),
     fill: rgb("#666666"),
   ))
@@ -90,24 +120,31 @@
   ))
   place(dx: 70pt, dy: 60pt, rect(
     width: 60pt, height: 24pt,
-    fill: rgb("#f3e5f5"),
-    stroke: (paint: rgb("#9c27b0"), thickness: 1pt),
+    fill: rgb("#fafafa"),
+    stroke: (paint: rgb("#9e9e9e"), thickness: 1pt),
     radius: 3pt,
     align(center + horizon, text(size: 9pt)[bb1]),
   ))
-  place(dx: 30pt, dy: 110pt, rect(
+  place(dx: 70pt, dy: 110pt, rect(
+    width: 60pt, height: 24pt,
+    fill: rgb("#f3e5f5"),
+    stroke: (paint: rgb("#9c27b0"), thickness: 1pt),
+    radius: 3pt,
+    align(center + horizon, text(size: 9pt)[bb2]),
+  ))
+  place(dx: 30pt, dy: 160pt, rect(
     width: 60pt, height: 24pt,
     fill: rgb("#e3f2fd"),
     stroke: (paint: rgb("#2196f3"), thickness: 1pt),
     radius: 3pt,
-    align(center + horizon, text(size: 9pt)[bb2]),
+    align(center + horizon, text(size: 9pt)[bb3]),
   ))
-  place(dx: 150pt, dy: 110pt, rect(
+  place(dx: 150pt, dy: 160pt, rect(
     width: 60pt, height: 24pt,
     fill: rgb("#ffebee"),
     stroke: (paint: rgb("#f44336"), thickness: 1pt),
     radius: 3pt,
-    align(center + horizon, text(size: 9pt)[bb3]),
+    align(center + horizon, text(size: 9pt)[bb4]),
   ))
 })
 
@@ -121,23 +158,35 @@ _Entry point of the function._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`_2 = checked(-2 + 1)`], [Checked Add (may panic)],
-  [`→ assert(move _2.1 == false) → bb1`], [Panic if move \_2.1 is true],
+  [`_1 = Array(21, 0, 0, 0, 0, 0, 0, 0)`], [Construct aggregate],
+  [`_2 = Option::Some(_1)`], [Construct aggregate],
+  [`→ _3 = map(_2, ()) → bb1`], [Call map],
 )
 
-=== bb1 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
+=== bb1
 
 #table(
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`_1 = move _2.0`], [Move value],
-  [`_4 = -1`], [Load constant],
-  [`_3 = move _4 == _1`], [Equal operation],
-  [`→ switch(move _3) [0→bb3; else→bb2]`], [Branch on move \_3],
+  [`_5 = &_3`], [Shared borrow],
+  [`_6 = 0`], [Load constant],
+  [`_4 = Tuple(move _5, move _6)`], [Construct aggregate],
+  [`_7 = _4.0`], [Copy value],
+  [`_8 = _4.1`], [Copy value],
+  [`→ _9 = eq(_7, _8) → bb2`], [Call eq],
 )
 
-=== bb2 #text(fill: rgb("#888888"), weight: "regular")[ — return / success]
+=== bb2 #text(fill: rgb("#888888"), weight: "regular")[ — branch point]
+
+#table(
+  columns: (1fr, 1fr),
+  align: (left, left),
+  [*MIR*], [*Annotation*],
+  [`→ switch(move _9) [0→bb4; else→bb3]`], [Branch on move \_9],
+)
+
+=== bb3 #text(fill: rgb("#888888"), weight: "regular")[ — return / success]
 
 _Normal return path._
 
@@ -148,7 +197,7 @@ _Normal return path._
   [`→ return`], [Return from function],
 )
 
-=== bb3 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
+=== bb4 #text(fill: rgb("#888888"), weight: "regular")[ — panic path]
 
 _Panic/diverging path._
 
@@ -156,7 +205,9 @@ _Panic/diverging path._
   columns: (1fr, 1fr),
   align: (left, left),
   [*MIR*], [*Annotation*],
-  [`→ _5 = panic([16 bytes])`], [Call panic],
+  [`_10 = AssertKind::Eq()`], [Construct aggregate],
+  [`_12 = Option::None()`], [Construct aggregate],
+  [`→ _11 = assert_failed(move _10, _7, _8, move _12)`], [Call assert\_failed],
 )
 
 == Key Observations

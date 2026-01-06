@@ -36,7 +36,7 @@ fn main() {
 
 - *Function:* `main`
 - *Basic blocks:* 4
-- *Return type:* `()`
+- *Return type:* `() (0 bytes, align 1)`
 - *Notable properties:*
   - Contains panic path
   - Uses checked arithmetic
@@ -50,22 +50,36 @@ fn main() {
   columns: (auto, 1fr, auto),
   align: (center, left, left),
   [*Local*], [*Type*], [*Notes*],
-  [`0`], [`()`], [Return place],
-  [`1`], [`i32`], [],
-  [`2`], [`i32`], [],
-  [`3`], [`(i32, bool)`], [],
-  [`4`], [`(&i32, &i32)`], [],
-  [`5`], [`&i32`], [],
-  [`6`], [`&i32`], [],
-  [`7`], [`&i32`], [],
-  [`8`], [`&i32`], [],
-  [`9`], [`bool`], [],
-  [`10`], [`i32`], [],
-  [`11`], [`i32`], [],
-  [`12`], [`core::panicking::AssertKind`], [],
-  [`13`], [`!`], [],
-  [`14`], [`std::option::Option<std::fmt::Arguments<'_>>`], [],
+  [`0`], [`() (0 bytes, align 1)`], [Return place],
+  [`1`], [`Int(I32)`], [],
+  [`2`], [`Int(I32)`], [],
+  [`3`], [`(i32, bool) (8 bytes, align 4)`], [],
+  [`4`], [`(&i32, &i32) (16 bytes, align 8)`], [],
+  [`5`], [`&i32 (8 bytes, align 8)`], [],
+  [`6`], [`&i32 (8 bytes, align 8)`], [],
+  [`7`], [`&i32 (8 bytes, align 8)`], [],
+  [`8`], [`&i32 (8 bytes, align 8)`], [],
+  [`9`], [`Bool`], [],
+  [`10`], [`Int(I32)`], [],
+  [`11`], [`Int(I32)`], [],
+  [`12`], [`core::panicking::AssertKind (1 bytes, align 1)`], [],
+  [`13`], [`()`], [],
+  [`14`], [`std::option::Option<std::fmt::Arguments<'_>> (48 bytes, align 8)`], [],
 )
+
+== Borrows
+
+#table(
+  columns: (auto, auto, auto, auto, auto),
+  align: (center, center, center, center, center),
+  [*\#*], [*Borrow*], [*Kind*], [*Created At*], [*Borrowed*],
+  [0], [`_5`], [`&`], [`bb1[1]`], [`_2`],
+  [1], [`_6`], [`&`], [`bb1[2]`], [`_1`],
+)
+
+#text(size: 9pt, fill: rgb("#666666"))[
+  _Borrows are tracked conservatively: active from creation until reassignment or scope end._
+]
 
 == Control-Flow Overview
 

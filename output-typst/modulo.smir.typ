@@ -33,7 +33,7 @@ fn main() {
 
 - *Function:* `main`
 - *Basic blocks:* 5
-- *Return type:* `()`
+- *Return type:* `() (0 bytes, align 1)`
 - *Notable properties:*
   - Contains panic path
   - Contains assertions
@@ -45,13 +45,13 @@ fn main() {
   columns: (auto, 1fr, auto),
   align: (center, left, left),
   [*Local*], [*Type*], [*Notes*],
-  [`0`], [`()`], [Return place],
-  [`1`], [`i32`], [],
-  [`2`], [`bool`], [],
-  [`3`], [`bool`], [],
-  [`4`], [`bool`], [],
-  [`5`], [`bool`], [],
-  [`6`], [`!`], [],
+  [`0`], [`() (0 bytes, align 1)`], [Return place],
+  [`1`], [`Int(I32)`], [],
+  [`2`], [`Bool`], [],
+  [`3`], [`Bool`], [],
+  [`4`], [`Bool`], [],
+  [`5`], [`Bool`], [],
+  [`6`], [`()`], [],
 )
 
 == Control-Flow Overview

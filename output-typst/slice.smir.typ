@@ -37,7 +37,7 @@ fn main() {
 
 - *Function:* `main`
 - *Basic blocks:* 5
-- *Return type:* `()`
+- *Return type:* `() (0 bytes, align 1)`
 - *Notable properties:*
   - Contains panic path
   - Introduces borrows
@@ -49,17 +49,31 @@ fn main() {
   columns: (auto, 1fr, auto),
   align: (center, left, left),
   [*Local*], [*Type*], [*Notes*],
-  [`0`], [`()`], [Return place],
-  [`1`], [`[i32; 4]`], [],
-  [`2`], [`&[i32]`], [],
-  [`3`], [`&[i32]`], [],
-  [`4`], [`&[i32; 4]`], [],
-  [`5`], [`std::ops::Range<usize>`], [],
-  [`6`], [`bool`], [],
-  [`7`], [`&&[i32]`], [],
-  [`8`], [`&[i32; 2]`], [],
-  [`9`], [`!`], [],
+  [`0`], [`() (0 bytes, align 1)`], [Return place],
+  [`1`], [`[i32; 4] (16 bytes, align 4)`], [],
+  [`2`], [`&[i32] (16 bytes, align 8)`], [],
+  [`3`], [`&[i32] (16 bytes, align 8)`], [],
+  [`4`], [`&[i32; 4] (8 bytes, align 8)`], [],
+  [`5`], [`std::ops::Range<usize> (16 bytes, align 8)`], [],
+  [`6`], [`Bool`], [],
+  [`7`], [`&&[i32] (8 bytes, align 8)`], [],
+  [`8`], [`&[i32; 2] (8 bytes, align 8)`], [],
+  [`9`], [`()`], [],
 )
+
+== Borrows
+
+#table(
+  columns: (auto, auto, auto, auto, auto),
+  align: (center, center, center, center, center),
+  [*\#*], [*Borrow*], [*Kind*], [*Created At*], [*Borrowed*],
+  [0], [`_4`], [`&`], [`bb0[1]`], [`_1`],
+  [1], [`_7`], [`&`], [`bb1[1]`], [`_2`],
+)
+
+#text(size: 9pt, fill: rgb("#666666"))[
+  _Borrows are tracked conservatively: active from creation until reassignment or scope end._
+]
 
 == Control-Flow Overview
 

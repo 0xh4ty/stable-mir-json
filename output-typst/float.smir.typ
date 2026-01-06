@@ -38,7 +38,7 @@
 
 - *Function:* `main`
 - *Basic blocks:* 5
-- *Return type:* `()`
+- *Return type:* `() (0 bytes, align 1)`
 - *Notable properties:*
   - Contains panic path
   - Has conditional branches
@@ -49,17 +49,17 @@
   columns: (auto, 1fr, auto),
   align: (center, left, left),
   [*Local*], [*Type*], [*Notes*],
-  [`0`], [`()`], [Return place],
-  [`1`], [`bool`], [],
-  [`2`], [`f32`], [],
-  [`3`], [`f32`], [],
-  [`4`], [`f32`], [],
-  [`5`], [`!`], [],
-  [`6`], [`bool`], [],
-  [`7`], [`f64`], [],
-  [`8`], [`f64`], [],
-  [`9`], [`f64`], [],
-  [`10`], [`!`], [],
+  [`0`], [`() (0 bytes, align 1)`], [Return place],
+  [`1`], [`Bool`], [],
+  [`2`], [`Float(F32)`], [],
+  [`3`], [`Float(F32)`], [],
+  [`4`], [`Float(F32)`], [],
+  [`5`], [`()`], [],
+  [`6`], [`Bool`], [],
+  [`7`], [`Float(F64)`], [],
+  [`8`], [`Float(F64)`], [],
+  [`9`], [`Float(F64)`], [],
+  [`10`], [`()`], [],
 )
 
 == Control-Flow Overview

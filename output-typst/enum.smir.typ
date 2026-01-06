@@ -33,7 +33,7 @@ fn main() {
 
 - *Function:* `main`
 - *Basic blocks:* 1
-- *Return type:* `()`
+- *Return type:* `() (0 bytes, align 1)`
 
 == Locals
 
@@ -41,8 +41,8 @@ fn main() {
   columns: (auto, 1fr, auto),
   align: (center, left, left),
   [*Local*], [*Type*], [*Notes*],
-  [`0`], [`()`], [Return place],
-  [`1`], [`Letter`], [],
+  [`0`], [`() (0 bytes, align 1)`], [Return place],
+  [`1`], [`Letter (1 bytes, align 1)`], [],
 )
 
 == Control-Flow Overview

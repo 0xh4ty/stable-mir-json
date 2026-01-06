@@ -33,7 +33,7 @@
 
 - *Function:* `test_sum_to_n`
 - *Basic blocks:* 4
-- *Return type:* `()`
+- *Return type:* `() (0 bytes, align 1)`
 - *Notable properties:*
   - Contains panic path
   - Has conditional branches
@@ -44,12 +44,12 @@
   columns: (auto, 1fr, auto),
   align: (center, left, left),
   [*Local*], [*Type*], [*Notes*],
-  [`0`], [`()`], [Return place],
-  [`1`], [`bool`], [],
-  [`2`], [`usize`], [],
-  [`3`], [`usize`], [],
-  [`4`], [`usize`], [],
-  [`5`], [`!`], [],
+  [`0`], [`() (0 bytes, align 1)`], [Return place],
+  [`1`], [`Bool`], [],
+  [`2`], [`Uint(Usize)`], [],
+  [`3`], [`Uint(Usize)`], [],
+  [`4`], [`Uint(Usize)`], [],
+  [`5`], [`()`], [],
 )
 
 == Control-Flow Overview
@@ -192,7 +192,7 @@ fn main() {
 
 - *Function:* `main`
 - *Basic blocks:* 2
-- *Return type:* `()`
+- *Return type:* `() (0 bytes, align 1)`
 
 == Locals
 
@@ -200,8 +200,8 @@ fn main() {
   columns: (auto, 1fr, auto),
   align: (center, left, left),
   [*Local*], [*Type*], [*Notes*],
-  [`0`], [`()`], [Return place],
-  [`1`], [`()`], [],
+  [`0`], [`() (0 bytes, align 1)`], [Return place],
+  [`1`], [`() (0 bytes, align 1)`], [],
 )
 
 == Control-Flow Overview
@@ -297,7 +297,7 @@ fn sum_to_n(n:usize) -> usize {
 
 - *Function:* `sum_to_n`
 - *Basic blocks:* 6
-- *Return type:* `usize`
+- *Return type:* `Uint(Usize)`
 - *Notable properties:*
   - Contains panic path
   - Uses checked arithmetic
@@ -310,16 +310,16 @@ fn sum_to_n(n:usize) -> usize {
   columns: (auto, 1fr, auto),
   align: (center, left, left),
   [*Local*], [*Type*], [*Notes*],
-  [`0`], [`usize`], [Return place],
-  [`1`], [`usize`], [],
-  [`2`], [`usize`], [],
-  [`3`], [`usize`], [],
-  [`4`], [`bool`], [],
-  [`5`], [`usize`], [],
-  [`6`], [`usize`], [],
-  [`7`], [`(usize, bool)`], [],
-  [`8`], [`usize`], [],
-  [`9`], [`(usize, bool)`], [],
+  [`0`], [`Uint(Usize)`], [Return place],
+  [`1`], [`Uint(Usize)`], [],
+  [`2`], [`Uint(Usize)`], [],
+  [`3`], [`Uint(Usize)`], [],
+  [`4`], [`Bool`], [],
+  [`5`], [`Uint(Usize)`], [],
+  [`6`], [`Uint(Usize)`], [],
+  [`7`], [`(usize, bool) (16 bytes, align 8)`], [],
+  [`8`], [`Uint(Usize)`], [],
+  [`9`], [`(usize, bool) (16 bytes, align 8)`], [],
 )
 
 == Control-Flow Overview

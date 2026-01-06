@@ -35,7 +35,7 @@ fn main() {
 
 - *Function:* `main`
 - *Basic blocks:* 4
-- *Return type:* `()`
+- *Return type:* `() (0 bytes, align 1)`
 - *Notable properties:*
   - Contains panic path
   - Has conditional branches
@@ -46,9 +46,9 @@ fn main() {
   columns: (auto, 1fr, auto),
   align: (center, left, left),
   [*Local*], [*Type*], [*Notes*],
-  [`0`], [`()`], [Return place],
-  [`1`], [`bool`], [],
-  [`2`], [`!`], [],
+  [`0`], [`() (0 bytes, align 1)`], [Return place],
+  [`1`], [`Bool`], [],
+  [`2`], [`()`], [],
 )
 
 == Control-Flow Overview
@@ -191,7 +191,7 @@ fn is_odd(n:u32) -> bool {
 
 - *Function:* `is_odd`
 - *Basic blocks:* 5
-- *Return type:* `bool`
+- *Return type:* `Bool`
 - *Notable properties:*
   - Contains panic path
   - Uses checked arithmetic
@@ -204,10 +204,10 @@ fn is_odd(n:u32) -> bool {
   columns: (auto, 1fr, auto),
   align: (center, left, left),
   [*Local*], [*Type*], [*Notes*],
-  [`0`], [`bool`], [Return place],
-  [`1`], [`u32`], [],
-  [`2`], [`u32`], [],
-  [`3`], [`(u32, bool)`], [],
+  [`0`], [`Bool`], [Return place],
+  [`1`], [`Uint(U32)`], [],
+  [`2`], [`Uint(U32)`], [],
+  [`3`], [`(u32, bool) (8 bytes, align 4)`], [],
 )
 
 == Control-Flow Overview
@@ -383,7 +383,7 @@ fn is_even(n:u32) -> bool {
 
 - *Function:* `is_even`
 - *Basic blocks:* 5
-- *Return type:* `bool`
+- *Return type:* `Bool`
 - *Notable properties:*
   - Contains panic path
   - Uses checked arithmetic
@@ -396,10 +396,10 @@ fn is_even(n:u32) -> bool {
   columns: (auto, 1fr, auto),
   align: (center, left, left),
   [*Local*], [*Type*], [*Notes*],
-  [`0`], [`bool`], [Return place],
-  [`1`], [`u32`], [],
-  [`2`], [`u32`], [],
-  [`3`], [`(u32, bool)`], [],
+  [`0`], [`Bool`], [Return place],
+  [`1`], [`Uint(U32)`], [],
+  [`2`], [`Uint(U32)`], [],
+  [`3`], [`(u32, bool) (8 bytes, align 4)`], [],
 )
 
 == Control-Flow Overview

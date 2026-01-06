@@ -35,7 +35,7 @@ fn main() {
 
 - *Function:* `main`
 - *Basic blocks:* 4
-- *Return type:* `()`
+- *Return type:* `() (0 bytes, align 1)`
 - *Notable properties:*
   - Contains panic path
   - Has conditional branches
@@ -46,9 +46,9 @@ fn main() {
   columns: (auto, 1fr, auto),
   align: (center, left, left),
   [*Local*], [*Type*], [*Notes*],
-  [`0`], [`()`], [Return place],
-  [`1`], [`u32`], [],
-  [`2`], [`!`], [],
+  [`0`], [`() (0 bytes, align 1)`], [Return place],
+  [`1`], [`Uint(U32)`], [],
+  [`2`], [`()`], [],
 )
 
 == Control-Flow Overview
@@ -191,7 +191,7 @@ fn fibonacci(n:u32) -> u32 {
 
 - *Function:* `fibonacci`
 - *Basic blocks:* 10
-- *Return type:* `u32`
+- *Return type:* `Uint(U32)`
 - *Notable properties:*
   - Contains panic path
   - Uses checked arithmetic
@@ -205,15 +205,15 @@ fn fibonacci(n:u32) -> u32 {
   columns: (auto, 1fr, auto),
   align: (center, left, left),
   [*Local*], [*Type*], [*Notes*],
-  [`0`], [`u32`], [Return place],
-  [`1`], [`u32`], [],
-  [`2`], [`u32`], [],
-  [`3`], [`u32`], [],
-  [`4`], [`(u32, bool)`], [],
-  [`5`], [`u32`], [],
-  [`6`], [`u32`], [],
-  [`7`], [`(u32, bool)`], [],
-  [`8`], [`(u32, bool)`], [],
+  [`0`], [`Uint(U32)`], [Return place],
+  [`1`], [`Uint(U32)`], [],
+  [`2`], [`Uint(U32)`], [],
+  [`3`], [`Uint(U32)`], [],
+  [`4`], [`(u32, bool) (8 bytes, align 4)`], [],
+  [`5`], [`Uint(U32)`], [],
+  [`6`], [`Uint(U32)`], [],
+  [`7`], [`(u32, bool) (8 bytes, align 4)`], [],
+  [`8`], [`(u32, bool) (8 bytes, align 4)`], [],
 )
 
 == Control-Flow Overview

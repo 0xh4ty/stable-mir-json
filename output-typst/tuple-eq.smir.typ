@@ -35,7 +35,7 @@ fn main() {
 
 - *Function:* `main`
 - *Basic blocks:* 4
-- *Return type:* `()`
+- *Return type:* `() (0 bytes, align 1)`
 - *Notable properties:*
   - Contains panic path
   - Introduces borrows
@@ -47,13 +47,26 @@ fn main() {
   columns: (auto, 1fr, auto),
   align: (center, left, left),
   [*Local*], [*Type*], [*Notes*],
-  [`0`], [`()`], [Return place],
-  [`1`], [`(i32, i32)`], [],
-  [`2`], [`bool`], [],
-  [`3`], [`&(i32, i32)`], [],
-  [`4`], [`&(i32, i32)`], [],
-  [`5`], [`!`], [],
+  [`0`], [`() (0 bytes, align 1)`], [Return place],
+  [`1`], [`(i32, i32) (8 bytes, align 4)`], [],
+  [`2`], [`Bool`], [],
+  [`3`], [`&(i32, i32) (8 bytes, align 8)`], [],
+  [`4`], [`&(i32, i32) (8 bytes, align 8)`], [],
+  [`5`], [`()`], [],
 )
+
+== Borrows
+
+#table(
+  columns: (auto, auto, auto, auto, auto),
+  align: (center, center, center, center, center),
+  [*\#*], [*Borrow*], [*Kind*], [*Created At*], [*Borrowed*],
+  [0], [`_3`], [`&`], [`bb0[1]`], [`_1`],
+)
+
+#text(size: 9pt, fill: rgb("#666666"))[
+  _Borrows are tracked conservatively: active from creation until reassignment or scope end._
+]
 
 == Control-Flow Overview
 

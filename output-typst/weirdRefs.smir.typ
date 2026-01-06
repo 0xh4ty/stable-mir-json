@@ -60,7 +60,7 @@ fn main () {
 
 - *Function:* `main`
 - *Basic blocks:* 11
-- *Return type:* `()`
+- *Return type:* `() (0 bytes, align 1)`
 - *Notable properties:*
   - Contains panic path
   - Introduces borrows
@@ -72,32 +72,47 @@ fn main () {
   columns: (auto, 1fr, auto),
   align: (center, left, left),
   [*Local*], [*Type*], [*Notes*],
-  [`0`], [`()`], [Return place],
-  [`1`], [`MyStruct`], [],
-  [`2`], [`&mut i8`], [],
-  [`3`], [`i8`], [],
-  [`4`], [`!`], [],
-  [`5`], [`&mut i8`], [],
-  [`6`], [`&mut &mut i8`], [],
-  [`7`], [`i8`], [],
-  [`8`], [`!`], [],
-  [`9`], [`Enclosing<'_>`], [],
-  [`10`], [`&mut MyStruct`], [],
-  [`11`], [`&mut Enclosing<'_>`], [],
-  [`12`], [`i8`], [],
-  [`13`], [`!`], [],
-  [`14`], [`&mut usize`], [],
-  [`15`], [`i8`], [],
-  [`16`], [`bool`], [],
-  [`17`], [`!`], [],
-  [`18`], [`usize`], [],
-  [`19`], [`!`], [],
-  [`20`], [`&mut i8`], [],
-  [`21`], [`&mut MyStruct`], [],
-  [`22`], [`&mut MyStruct`], [],
-  [`23`], [`&mut MyStruct`], [],
-  [`24`], [`&mut MyStruct`], [],
+  [`0`], [`() (0 bytes, align 1)`], [Return place],
+  [`1`], [`MyStruct (16 bytes, align 8)`], [],
+  [`2`], [`&mut i8 (8 bytes, align 8)`], [],
+  [`3`], [`Int(I8)`], [],
+  [`4`], [`()`], [],
+  [`5`], [`&mut i8 (8 bytes, align 8)`], [],
+  [`6`], [`&mut &mut i8 (8 bytes, align 8)`], [],
+  [`7`], [`Int(I8)`], [],
+  [`8`], [`()`], [],
+  [`9`], [`Enclosing<'_> (8 bytes, align 8)`], [],
+  [`10`], [`&mut MyStruct (8 bytes, align 8)`], [],
+  [`11`], [`&mut Enclosing<'_> (8 bytes, align 8)`], [],
+  [`12`], [`Int(I8)`], [],
+  [`13`], [`()`], [],
+  [`14`], [`&mut usize (8 bytes, align 8)`], [],
+  [`15`], [`Int(I8)`], [],
+  [`16`], [`Bool`], [],
+  [`17`], [`()`], [],
+  [`18`], [`Uint(Usize)`], [],
+  [`19`], [`()`], [],
+  [`20`], [`&mut i8 (8 bytes, align 8)`], [],
+  [`21`], [`&mut MyStruct (8 bytes, align 8)`], [],
+  [`22`], [`&mut MyStruct (8 bytes, align 8)`], [],
+  [`23`], [`&mut MyStruct (8 bytes, align 8)`], [],
+  [`24`], [`&mut MyStruct (8 bytes, align 8)`], [],
 )
+
+== Borrows
+
+#table(
+  columns: (auto, auto, auto, auto, auto),
+  align: (center, center, center, center, center),
+  [*\#*], [*Borrow*], [*Kind*], [*Created At*], [*Borrowed*],
+  [0], [`_6`], [`&mut`], [`bb1[1]`], [`_5`],
+  [1], [`_10`], [`&mut`], [`bb3[0]`], [`_1`],
+  [2], [`_11`], [`&mut`], [`bb3[2]`], [`_9`],
+)
+
+#text(size: 9pt, fill: rgb("#666666"))[
+  _Borrows are tracked conservatively: active from creation until reassignment or scope end._
+]
 
 == Control-Flow Overview
 

@@ -35,7 +35,7 @@ fn main() {
 
 - *Function:* `main`
 - *Basic blocks:* 2
-- *Return type:* `()`
+- *Return type:* `() (0 bytes, align 1)`
 
 == Locals
 
@@ -43,10 +43,10 @@ fn main() {
   columns: (auto, 1fr, auto),
   align: (center, left, left),
   [*Local*], [*Type*], [*Notes*],
-  [`0`], [`()`], [Return place],
-  [`1`], [`std::option::Option<u32>`], [],
-  [`2`], [`std::option::Option<u32>`], [],
-  [`3`], [`u32`], [],
+  [`0`], [`() (0 bytes, align 1)`], [Return place],
+  [`1`], [`std::option::Option<u32> (8 bytes, align 4)`], [],
+  [`2`], [`std::option::Option<u32> (8 bytes, align 4)`], [],
+  [`3`], [`Uint(U32)`], [],
 )
 
 == Control-Flow Overview
