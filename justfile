@@ -72,6 +72,49 @@ dot:
     done
     echo "Done. DOT files in output-dot/"
 
+# Generate SVG output for all test programs (requires graphviz)
+svg outdir="output-svg":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    mkdir -p {{outdir}}
+    for rust in {{test_dir}}/*.rs; do
+        name=$(basename "${rust%.rs}")
+        echo "Generating SVG for $name..."
+        cargo run -- --dot -Zno-codegen "$rust" 2>/dev/null || continue
+        if [ -f "${name}.smir.dot" ]; then
+            dot -Tsvg "${name}.smir.dot" -o "{{outdir}}/${name}.smir.svg"
+            rm "${name}.smir.dot"
+            echo "  -> {{outdir}}/${name}.smir.svg"
+        fi
+    done
+    echo "Done. SVG files in {{outdir}}/"
+
+# Generate SVG for a single file (requires graphviz)
+svg-file file outdir="output-svg":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    mkdir -p {{outdir}}
+    name=$(basename "{{file}}" .rs)
+    cargo run -- --dot -Zno-codegen "{{file}}"
+    dot -Tsvg "${name}.smir.dot" -o "{{outdir}}/${name}.smir.svg"
+    rm "${name}.smir.dot"
+    echo "Generated: {{outdir}}/${name}.smir.svg"
+
+# Generate docs (HTML + SVG + viewer pages + index)
+docs: (svg "docs")
+    #!/usr/bin/env bash
+    set -euo pipefail
+    # Generate HTML files
+    for rust in {{test_dir}}/*.rs; do
+        name=$(basename "${rust%.rs}")
+        echo "Generating HTML for $name..."
+        cargo run -- --html -Zno-codegen --out-dir docs "$rust" 2>/dev/null || true
+    done
+    # Generate index and SVG viewer pages
+    echo "Generating index.html and SVG viewers..."
+    ./scripts/generate-index.sh docs
+    echo "Done. Documentation in docs/"
+
 # Generate D2 output for all test programs
 d2:
     #!/usr/bin/env bash
@@ -143,7 +186,7 @@ typst-pdf file:
     echo "Generated: output-typst/${name}.smir.pdf"
 
 # Generate all output formats
-all: html dot d2 md typst
+all: html dot svg d2 md typst
 
 # Show annotated MIR for a file in the terminal
 show file:
