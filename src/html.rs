@@ -594,7 +594,8 @@ fn render_block_html(idx: usize, rows: &[AnnotatedRow]) -> String {
 fn render_borrows_panel(borrow_index: &BorrowIndex) -> String {
     let mut html = String::new();
 
-    html.push_str(r#"    <details class="borrows-section" open>
+    html.push_str(
+        r#"    <details class="borrows-section" open>
         <summary>Borrows</summary>
         <table class="borrows-table">
             <thead>
@@ -607,7 +608,8 @@ fn render_borrows_panel(borrow_index: &BorrowIndex) -> String {
                 </tr>
             </thead>
             <tbody>
-"#);
+"#,
+    );
 
     for borrow in &borrow_index.borrows {
         let kind = match borrow.kind {

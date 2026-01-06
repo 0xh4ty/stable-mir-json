@@ -63,7 +63,8 @@ impl MirExplorer {
 
     /// Get the name of a function by index
     pub fn function_name(&self, index: usize) -> Option<String> {
-        self.data.as_ref()
+        self.data
+            .as_ref()
             .and_then(|d| d.functions.get(index))
             .map(|f| f.short_name.clone())
     }
@@ -275,7 +276,8 @@ impl MirExplorer {
             "predecessors": block.predecessors,
             "path": self.path,
             "selected_edge": self.selected_edge,
-        })).ok()
+        }))
+        .ok()
     }
 
     /// Get locals info as JSON

@@ -293,8 +293,11 @@ main();
 fn modify_wasm_js(js: &str) -> String {
     // The wasm-bindgen output has an init function that we need to expose
     // We rename it to __wbg_init and export create_explorer
-    js.replace("export default __wbg_init;", "// init exposed as __wbg_init")
-      .replace("export { initSync }", "// initSync removed for embedding")
+    js.replace(
+        "export default __wbg_init;",
+        "// init exposed as __wbg_init",
+    )
+    .replace("export { initSync }", "// initSync removed for embedding")
 }
 
 const EMBEDDED_CSS: &str = r##":root {

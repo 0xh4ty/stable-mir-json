@@ -56,9 +56,7 @@ impl GraphLayout {
         // Build adjacency list for BFS
         let mut successors: HashMap<usize, Vec<usize>> = HashMap::new();
         for block in &func.blocks {
-            let targets: Vec<usize> = block.terminator.edges.iter()
-                .map(|e| e.target)
-                .collect();
+            let targets: Vec<usize> = block.terminator.edges.iter().map(|e| e.target).collect();
             successors.insert(block.id, targets);
         }
 
@@ -74,7 +72,11 @@ impl GraphLayout {
         // Compute bounds
         let bounds = Self::compute_bounds(&nodes);
 
-        Self { nodes, edges, bounds }
+        Self {
+            nodes,
+            edges,
+            bounds,
+        }
     }
 
     /// Compute layers using BFS from entry
@@ -139,7 +141,8 @@ impl GraphLayout {
         ];
 
         for (layer_idx, layer) in layers.iter().enumerate() {
-            let layer_width = layer.len() as f64 * (NODE_WIDTH + HORIZONTAL_SPACING) - HORIZONTAL_SPACING;
+            let layer_width =
+                layer.len() as f64 * (NODE_WIDTH + HORIZONTAL_SPACING) - HORIZONTAL_SPACING;
             let start_x = -layer_width / 2.0;
 
             for (pos_in_layer, &node_id) in layer.iter().enumerate() {
@@ -198,12 +201,7 @@ impl GraphLayout {
     }
 
     /// Route a forward edge (going down)
-    fn route_forward_edge(
-        from_x: f64,
-        from_y: f64,
-        to_x: f64,
-        to_y: f64,
-    ) -> Vec<(f64, f64)> {
+    fn route_forward_edge(from_x: f64, from_y: f64, to_x: f64, to_y: f64) -> Vec<(f64, f64)> {
         let mid_y = (from_y + to_y) / 2.0;
         vec![
             (from_x, from_y),

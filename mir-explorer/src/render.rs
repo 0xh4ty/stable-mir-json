@@ -50,7 +50,12 @@ impl Renderer {
         let width = canvas.width() as f64;
         let height = canvas.height() as f64;
 
-        Ok(Self { canvas, ctx, width, height })
+        Ok(Self {
+            canvas,
+            ctx,
+            width,
+            height,
+        })
     }
 
     pub fn width(&self) -> f64 {
@@ -99,15 +104,17 @@ impl Renderer {
         let path_set: HashSet<usize> = path.iter().copied().collect();
 
         // Get edges from current block for highlighting
-        let current_edges: Vec<usize> = func.blocks.get(current)
+        let current_edges: Vec<usize> = func
+            .blocks
+            .get(current)
             .map(|b| b.terminator.edges.iter().map(|e| e.target).collect())
             .unwrap_or_default();
 
         // Render edges first (behind nodes)
         for edge in &layout.edges {
             let is_taken = self.is_edge_in_path(edge.from, edge.to, path, current);
-            let is_selected = edge.from == current
-                && current_edges.get(selected_edge) == Some(&edge.to);
+            let is_selected =
+                edge.from == current && current_edges.get(selected_edge) == Some(&edge.to);
             self.render_edge(edge, is_taken, is_selected);
         }
 
@@ -173,7 +180,8 @@ impl Renderer {
             &label,
             node.x + node.width / 2.0,
             node.y + node.height / 2.0,
-        ).unwrap_or(());
+        )
+        .unwrap_or(());
 
         // Reset opacity
         ctx.set_global_alpha(1.0);
@@ -270,9 +278,9 @@ impl Renderer {
 
         // Draw label background
         ctx.set_font("9px monospace");
-        let metrics = ctx.measure_text(&edge.label).unwrap_or_else(|_| {
-            ctx.measure_text("").unwrap()
-        });
+        let metrics = ctx
+            .measure_text(&edge.label)
+            .unwrap_or_else(|_| ctx.measure_text("").unwrap());
         let text_width = metrics.width();
         let padding = 3.0;
 

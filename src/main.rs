@@ -6,7 +6,9 @@ use driver::stable_mir_driver;
 use printer::emit_smir;
 use stable_mir_json::explore::{emit_explore, emit_explore_json};
 use stable_mir_json::html::emit_html;
-use stable_mir_json::mk_graph::{emit_d2file, emit_dotfile, emit_mdfile, emit_stdout, emit_typstfile};
+use stable_mir_json::mk_graph::{
+    emit_d2file, emit_dotfile, emit_mdfile, emit_stdout, emit_typstfile,
+};
 use stable_mir_json::wasm_embed::emit_wasm_explore;
 
 fn main() {

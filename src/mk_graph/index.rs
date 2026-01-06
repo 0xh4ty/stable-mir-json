@@ -524,10 +524,7 @@ impl SpanIndex {
 
     /// Build index from spans collected by SmirJson
     pub fn from_spans(spans: &[(usize, SpanInfo)]) -> Self {
-        let by_id = spans
-            .iter()
-            .map(|(id, info)| (*id, info.clone()))
-            .collect();
+        let by_id = spans.iter().map(|(id, info)| (*id, info.clone())).collect();
         Self { by_id }
     }
 
@@ -740,7 +737,10 @@ impl BorrowIndex {
                     if borrow_indices.contains(&borrow.index) {
                         // Add to lines covered by the borrow's span
                         for line in span_info.line_start..=span_info.line_end {
-                            self.active_at_line.entry(line).or_default().push(borrow.index);
+                            self.active_at_line
+                                .entry(line)
+                                .or_default()
+                                .push(borrow.index);
                         }
                     }
                 }
@@ -918,7 +918,10 @@ impl SourceRange {
     /// Format with "line(s)" prefix
     pub fn format_verbose(&self) -> String {
         if self.start_line == self.end_line {
-            format!("line {}:{}-{}", self.start_line, self.start_col, self.end_col)
+            format!(
+                "line {}:{}-{}",
+                self.start_line, self.start_col, self.end_col
+            )
         } else {
             format!("lines {}-{}", self.start_line, self.end_line)
         }

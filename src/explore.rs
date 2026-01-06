@@ -201,7 +201,11 @@ pub fn build_explorer_data(smir: &SmirJson) -> ExplorerData {
     }
 }
 
-pub fn build_explorer_function(name: &str, body: &Body, span_index: &SpanIndex) -> ExplorerFunction {
+pub fn build_explorer_function(
+    name: &str,
+    body: &Body,
+    span_index: &SpanIndex,
+) -> ExplorerFunction {
     let short_name = short_fn_name(name);
 
     // Build blocks with edges
@@ -334,7 +338,11 @@ fn build_explorer_stmt(stmt: &Statement, span_index: &SpanIndex) -> ExplorerStmt
             place,
             variant_index,
         } => (
-            format!("discriminant({}) = {}", render_place(place), variant_index.to_index()),
+            format!(
+                "discriminant({}) = {}",
+                render_place(place),
+                variant_index.to_index()
+            ),
             "Set enum discriminant".to_string(),
         ),
         StatementKind::StorageLive(local) => (
@@ -366,10 +374,7 @@ fn build_explorer_stmt(stmt: &Statement, span_index: &SpanIndex) -> ExplorerStmt
             format!("AscribeUserType({})", render_place(place)),
             "User type annotation".to_string(),
         ),
-        StatementKind::Intrinsic(_) => (
-            "intrinsic".to_string(),
-            "Compiler intrinsic".to_string(),
-        ),
+        StatementKind::Intrinsic(_) => ("intrinsic".to_string(), "Compiler intrinsic".to_string()),
         StatementKind::ConstEvalCounter => (
             "ConstEvalCounter".to_string(),
             "Const evaluation counter".to_string(),

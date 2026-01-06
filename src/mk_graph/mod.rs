@@ -57,8 +57,7 @@ where
                 File::create(&out_path)
                     .unwrap_or_else(|e| panic!("Failed to create {}: {}", out_path.display(), e)),
             );
-            write!(b, "{}", content)
-                .unwrap_or_else(|_| panic!("Failed to write {}", extension));
+            write!(b, "{}", content).unwrap_or_else(|_| panic!("Failed to write {}", extension));
         }
     }
 }

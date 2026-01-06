@@ -97,11 +97,8 @@ impl SmirJson<'_> {
                                 let name = &item.symbol_name;
                                 let this_block = block_name(name, node_id);
 
-                                let mut label_strs: Vec<String> = b
-                                    .statements
-                                    .iter()
-                                    .map(|s| ctx.render_stmt(s))
-                                    .collect();
+                                let mut label_strs: Vec<String> =
+                                    b.statements.iter().map(|s| ctx.render_stmt(s)).collect();
                                 // switch on terminator kind, add inner and out-edges according to terminator
                                 use TerminatorKind::*;
                                 match &b.terminator.kind {

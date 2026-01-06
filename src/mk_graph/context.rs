@@ -12,7 +12,9 @@ use stable_mir::CrateDef;
 
 use crate::printer::SmirJson;
 
-use super::index::{AllocIndex, FunctionKey, LayoutInfo, SpanIndex, TypeEntry, TypeIndex, TypeKind};
+use super::index::{
+    AllocIndex, FunctionKey, LayoutInfo, SpanIndex, TypeEntry, TypeIndex, TypeKind,
+};
 use super::util::{bytes_to_u64_le, short_fn_name, GraphLabelString};
 use super::MAX_NUMERIC_BYTES;
 
@@ -53,8 +55,7 @@ impl GraphContext {
             functions_by_ty.insert(k.0, name);
         }
 
-        let uneval_consts: HashMap<ConstDef, String> =
-            smir.uneval_consts.iter().cloned().collect();
+        let uneval_consts: HashMap<ConstDef, String> = smir.uneval_consts.iter().cloned().collect();
         let spans = SpanIndex::from_spans(&smir.spans);
         let show_spans = std::env::var("SHOW_SPANS").is_ok();
 

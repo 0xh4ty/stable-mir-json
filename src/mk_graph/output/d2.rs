@@ -7,7 +7,9 @@ use crate::printer::SmirJson;
 use crate::MonoItemKind;
 
 use crate::mk_graph::context::GraphContext;
-use crate::mk_graph::util::{escape_d2, is_unqualified, name_lines, short_name, terminator_targets};
+use crate::mk_graph::util::{
+    escape_d2, is_unqualified, name_lines, short_name, terminator_targets,
+};
 
 impl SmirJson<'_> {
     /// Convert the MIR to D2 diagram format

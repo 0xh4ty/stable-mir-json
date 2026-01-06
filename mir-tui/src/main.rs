@@ -278,7 +278,9 @@ fn render_functions(frame: &mut Frame, app: &mut App, area: Rect) {
         .enumerate()
         .map(|(i, f)| {
             let style = if i == app.current_fn {
-                Style::default().fg(Color::Green).add_modifier(Modifier::BOLD)
+                Style::default()
+                    .fg(Color::Green)
+                    .add_modifier(Modifier::BOLD)
             } else {
                 Style::default()
             };
@@ -305,10 +307,7 @@ fn render_functions(frame: &mut Frame, app: &mut App, area: Rect) {
 }
 
 fn render_locals(frame: &mut Frame, app: &App, area: Rect) {
-    let locals = app
-        .current_function()
-        .map(|f| &f.locals[..])
-        .unwrap_or(&[]);
+    let locals = app.current_function().map(|f| &f.locals[..]).unwrap_or(&[]);
 
     let items: Vec<ListItem> = locals
         .iter()
@@ -352,7 +351,9 @@ fn render_block(frame: &mut Frame, app: &App, area: Rect) {
         if !b.summary.is_empty() {
             lines.push(Line::from(Span::styled(
                 &b.summary,
-                Style::default().fg(Color::DarkGray).add_modifier(Modifier::ITALIC),
+                Style::default()
+                    .fg(Color::DarkGray)
+                    .add_modifier(Modifier::ITALIC),
             )));
             lines.push(Line::from(""));
         }
@@ -394,7 +395,9 @@ fn render_block(frame: &mut Frame, app: &App, area: Rect) {
             Span::styled("  ", Style::default()),
             Span::styled(
                 &b.terminator.mir,
-                Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD),
+                Style::default()
+                    .fg(Color::Yellow)
+                    .add_modifier(Modifier::BOLD),
             ),
         ]));
         // Annotation
@@ -438,7 +441,9 @@ fn render_navigation(frame: &mut Frame, app: &App, area: Rect) {
                 _ => "",
             };
             let style = if i == app.selected_edge {
-                Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)
+                Style::default()
+                    .fg(Color::Cyan)
+                    .add_modifier(Modifier::BOLD)
             } else if e.kind == EdgeKind::Cleanup {
                 Style::default().fg(Color::Red)
             } else {

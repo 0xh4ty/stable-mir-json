@@ -102,12 +102,12 @@ impl BlockRole {
     /// Get the border color for this role
     pub fn border_color(&self) -> &'static str {
         match self {
-            BlockRole::Entry => "#50fa7b",      // Green
-            BlockRole::Exit => "#bd93f9",       // Purple
+            BlockRole::Entry => "#50fa7b",       // Green
+            BlockRole::Exit => "#bd93f9",        // Purple
             BlockRole::BranchPoint => "#ffb86c", // Orange
-            BlockRole::MergePoint => "#8be9fd", // Cyan
-            BlockRole::Cleanup => "#ff5555",    // Red
-            BlockRole::Linear => "#555",        // Gray
+            BlockRole::MergePoint => "#8be9fd",  // Cyan
+            BlockRole::Cleanup => "#ff5555",     // Red
+            BlockRole::Linear => "#555",         // Gray
         }
     }
 }
