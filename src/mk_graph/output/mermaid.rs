@@ -2,6 +2,7 @@
 
 extern crate stable_mir;
 use stable_mir::mir::TerminatorKind;
+use std::collections::HashSet;
 
 use crate::printer::SmirJson;
 use crate::MonoItemKind;
@@ -74,8 +75,8 @@ fn render_mermaid_function(
     out.push_str("        direction TD\n");
 
     if let Some(body) = body {
-        render_mermaid_blocks(body, ctx, out);
-        render_mermaid_block_edges(body, out);
+        render_mermaid_blocks(&fn_id, body, ctx, out);
+        render_mermaid_block_edges(&fn_id, body, out);
     } else {
         out.push_str("        empty[\"<empty body>\"]\n");
     }
@@ -89,7 +90,7 @@ fn render_mermaid_function(
     }
 }
 
-fn render_mermaid_blocks(body: &stable_mir::mir::Body, ctx: &GraphContext, out: &mut String) {
+fn render_mermaid_blocks(fn_id: &str, body: &stable_mir::mir::Body, ctx: &GraphContext, out: &mut String) {
     for (idx, block) in body.blocks.iter().enumerate() {
         let stmts: Vec<String> = block
             .statements
@@ -105,14 +106,14 @@ fn render_mermaid_blocks(body: &stable_mir::mir::Body, ctx: &GraphContext, out: 
         }
         label.push_str(&format!("<br/>---<br/>{}", term_str));
 
-        out.push_str(&format!("        bb{}[\"{}\"]\n", idx, label));
+        out.push_str(&format!("        {}_bb{}[\"{}\"]\n", fn_id, idx, label));
     }
 }
 
-fn render_mermaid_block_edges(body: &stable_mir::mir::Body, out: &mut String) {
+fn render_mermaid_block_edges(fn_id: &str, body: &stable_mir::mir::Body, out: &mut String) {
     for (idx, block) in body.blocks.iter().enumerate() {
         for target in terminator_targets(&block.terminator) {
-            out.push_str(&format!("        bb{} --> bb{}\n", idx, target));
+            out.push_str(&format!("        {}_bb{} --> {}_bb{}\n", fn_id, idx, fn_id, target));
         }
     }
 }
@@ -123,7 +124,44 @@ fn render_mermaid_call_edges(
     ctx: &GraphContext,
     out: &mut String,
 ) {
-    // stub
+    let mut emitted_callees = HashSet::new();
+
+    for (idx, block) in body.blocks.iter().enumerate() {
+        let TerminatorKind::Call { func, .. } = &block.terminator.kind else {
+            continue;
+        };
+
+        let Some(callee_name) = ctx.resolve_call_target(func) else {
+            continue;
+        };
+
+        if !is_unqualified(&callee_name) {
+            continue;
+        }
+
+        let callee_id = short_name(&callee_name);
+
+        if emitted_callees.insert(callee_id.clone()) {
+            out.push_str(&format!(
+                "    {}[\"{}\"]\n",
+                callee_id,
+                escape_mermaid(&callee_name)
+            ));
+            out.push_str(&format!(
+                "    style {} fill:#ffe0e0,stroke:#333\n",
+                callee_id
+            ));
+        }
+
+        out.push_str(&format!(
+            "    {}_bb{} -.->|call| {}\n",
+            fn_id, idx, callee_id
+        ));
+    }
+
+    if !emitted_callees.is_empty() {
+        out.push('\n');
+    }
 }
 
 fn render_mermaid_asm(asm: &str, out: &mut String) {

@@ -144,7 +144,7 @@ pub fn escape_mermaid(s: &str) -> String {
     s.replace('\\', "\\\\")
         .replace('"', "\\\"")
         .replace('\n', "<br/>")
-        .replace('$', "\\$")
+        .replace('$', "&#36;")
 }
 
 /// Convert byte slice to u64, little-endian (least significant byte first)
