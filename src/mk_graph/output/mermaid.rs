@@ -90,7 +90,23 @@ fn render_mermaid_function(
 }
 
 fn render_mermaid_blocks(body: &stable_mir::mir::Body, ctx: &GraphContext, out: &mut String) {
-    // stub
+    for (idx, block) in body.blocks.iter().enumerate() {
+        let stmts: Vec<String> = block
+            .statements
+            .iter()
+            .map(|s| escape_mermaid(&ctx.render_stmt(s)))
+            .collect();
+
+        let term_str = escape_mermaid(&ctx.render_terminator(&block.terminator));
+
+        let mut label = format!("bb{}:", idx);
+        for stmt in &stmts {
+            label.push_str(&format!("<br/>{}", stmt));
+        }
+        label.push_str(&format!("<br/>---<br/>{}", term_str));
+
+        out.push_str(&format!("        bb{}[\"{}\"]\n", idx, label));
+    }
 }
 
 fn render_mermaid_block_edges(body: &stable_mir::mir::Body, out: &mut String) {
