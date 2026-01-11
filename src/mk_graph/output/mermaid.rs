@@ -110,7 +110,11 @@ fn render_mermaid_blocks(body: &stable_mir::mir::Body, ctx: &GraphContext, out: 
 }
 
 fn render_mermaid_block_edges(body: &stable_mir::mir::Body, out: &mut String) {
-    // stub
+    for (idx, block) in body.blocks.iter().enumerate() {
+        for target in terminator_targets(&block.terminator) {
+            out.push_str(&format!("        bb{} --> bb{}\n", idx, target));
+        }
+    }
 }
 
 fn render_mermaid_call_edges(
