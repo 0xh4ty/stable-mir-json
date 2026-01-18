@@ -81,7 +81,10 @@ fn render_mermaid_function(
     let display_name = escape_mermaid(&name_lines(name));
 
     // Function subgraph container
-    out.push_str(&format!("    subgraph {}[\"{}\"]\n", fn_id, display_name));
+    out.push_str(&format!("    subgraph {}[\" \"]\n", fn_id));
+    out.push_str(&format!("        {}_label[\"{}\"]\n", fn_id, display_name));
+    out.push_str(&format!("        {}_label --> {}_bb0\n", fn_id, fn_id));
+    out.push_str(&format!("        style {}_label fill:#e0ffe0,stroke:#333\n", fn_id));
 
     if let Some(body) = body {
         render_mermaid_blocks(&fn_id, body, ctx, out);
