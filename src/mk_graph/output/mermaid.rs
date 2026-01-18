@@ -82,7 +82,6 @@ fn render_mermaid_function(
 
     // Function subgraph container
     out.push_str(&format!("    subgraph {}[\"{}\"]\n", fn_id, display_name));
-    out.push_str("        direction TD\n");
 
     if let Some(body) = body {
         render_mermaid_blocks(&fn_id, body, ctx, out);
