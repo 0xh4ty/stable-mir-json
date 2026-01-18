@@ -78,7 +78,7 @@ fn render_mermaid_function(
         }
     };
 
-    let display_name = escape_mermaid(&name_lines(name));
+    let display_name = escape_mermaid(name);
 
     // Function subgraph container
     out.push_str(&format!("    subgraph {}[\" \"]\n", fn_id));
